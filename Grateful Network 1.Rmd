@@ -18,7 +18,6 @@ library(readr)
 library(igraph)
 library(ggraph)
 library(tidyverse)
-library(gridExtra)
 
 suppressWarnings(expr)
 
@@ -54,7 +53,7 @@ grateful_data <- graph_from_data_frame(d = gd_edgelist, vertices = gd_vertices, 
 
 Now to check the vertices and edges in the graph I've created to ensure they represent the data accurately, and confirm that all of the attributes have been represented properly:
 
-```{r echo=TRUE, results=FALSE}
+```{r echo=TRUE}
 
 head(V(grateful_data)$name)
 head(E(grateful_data)$song.id)
