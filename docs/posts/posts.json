@@ -1,19 +1,19 @@
 [
   {
     "path": "posts/welcome/",
-    "title": "Welcome to Grateful Network",
-    "description": "Welcome to our new blog, Grateful Network. We hope you enjoy \nreading what we have to say!",
+    "title": "Welcome to the Grateful Network Project",
+    "description": "This is an Ongoing Project Exploring the Grateful Dead Original Song Co-Writing Network",
     "author": [
       {
-        "name": "Nora Jones",
-        "url": "https://example.com/norajones"
+        "name": "Kristina Becvar",
+        "url": "https://kbec19.github.io/Grateful-Network/"
       }
     ],
     "date": "2022-04-22",
     "categories": [],
     "contents": "\r\n\r\n\r\n\r\n",
     "preview": {},
-    "last_modified": "2022-04-22T11:47:08-05:00",
+    "last_modified": "2022-04-22T12:26:07-05:00",
     "input_file": {}
   }
 ]

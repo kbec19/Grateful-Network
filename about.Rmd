@@ -1,9 +1,21 @@
 ---
-title: "About this blog"
+title: "About The Project"
 description: |
-  Some additional details about the blog
+  Details and Citations
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+*Citations:*
+
+*Allan, Alex; Grateful Dead Lyric & Song Finder: https://whitegum.com/~acsa/intro.htm*
+
+*ASCAP. 18 March 2022.*
+
+*Dodd, David; The Annotated Grateful Dead Lyrics: http://artsites.ucsc.edu/gdead/agdl/*
+
+*Schofield, Matt; The Grateful Dead Family Discography: http://www.deaddisc.com/*
+
+*This information is intended for private research only, and not for any commercial use. Original Grateful Dead songs are ©copyright Ice Nine Music*

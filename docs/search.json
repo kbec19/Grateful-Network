@@ -2,18 +2,18 @@
   "articles": [
     {
       "path": "about.html",
-      "title": "About this blog",
-      "description": "Some additional details about the blog",
+      "title": "About The Project",
+      "description": "Details and Citations",
       "author": [],
-      "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2022-04-22T12:09:18-05:00"
+      "contents": "\r\nCitations:\r\nAllan, Alex; Grateful Dead Lyric & Song Finder: https://whitegum.com/~acsa/intro.htm\r\nASCAP. 18 March 2022.\r\nDodd, David; The Annotated Grateful Dead Lyrics: http://artsites.ucsc.edu/gdead/agdl/\r\nSchofield, Matt; The Grateful Dead Family Discography: http://www.deaddisc.com/\r\nThis information is intended for private research only, and not\r\nfor any commercial use. Original Grateful Dead songs are ©copyright Ice\r\nNine Music\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-04-22T12:27:53-05:00"
     },
     {
       "path": "index.html",
       "title": "Grateful Network",
       "author": [],
       "contents": "\r\n\r\n\r\n\r\n",
-      "last_modified": "2022-04-22T12:09:31-05:00"
+      "last_modified": "2022-04-22T12:26:08-05:00"
     }
   ],
   "collections": ["posts/posts.json"]
