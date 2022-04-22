@@ -2,6 +2,10 @@
 title: "Grateful Network Creation"
 description: |
   Building a Grateful Dead Original Song Co-Writing Network in R
+preview: images/sharpe-ratio.png
+categories:
+  - network creation
+  - network analytics
 author:
   - name: Kristina Becvar
     url: https://kbec19.github.io/Grateful-Network/
@@ -98,7 +102,11 @@ gd_igraph <- graph.adjacency(gd_projection,mode="undirected") #igraph object
 
 ### statnet
 
-Coercing directly from the original affiliation matrix kept giving the error, *"Error: `loops` is `FALSE`, but `x` contains loops."* I tried using the "intergraph" package, but it cannot coerce bipartite igraph networks. After the bipartite projection, I was able to create the statnet object as well.
+Coercing directly from the original affiliation matrix kept giving the error, *"Error: `loops` is `FALSE`, but `x` contains loops."* I tried using the "intergraph" package, but it cannot coerce bipartite igraph networks. 
+
+![](Picture1.png)
+
+After the bipartite projection, I was able to create the statnet object as well.
 
 ```{r code_folding=TRUE}
 set.seed(11)

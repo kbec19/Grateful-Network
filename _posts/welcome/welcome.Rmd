@@ -2,6 +2,8 @@
 title: "Welcome to the Grateful Network Project"
 description: |
   This is an Ongoing Project Exploring the Grateful Dead Original Song Co-Writing Network
+categories:
+  - grateful network
 author:
   - name: Kristina Becvar
     url: https://kbec19.github.io/Grateful-Network/
