@@ -14,7 +14,7 @@ More information to come as this repository is developed!
 
 Currently, I have published a github page chronicling the creation of igraph and statnet network objects using the affiliation matrix. More to come as I continue to build the database and knowledge!
 
-You can visit my progress on the [project page.](https://kbec19.github.io/Grateful-Network/){target="_blank"}
+You can visit my progress on the [project page.](https://kbec19.github.io/Grateful-Network/)
 
 * count as of 03.28.22
 
