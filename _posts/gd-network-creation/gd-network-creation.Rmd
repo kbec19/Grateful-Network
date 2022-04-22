@@ -2,7 +2,7 @@
 title: "Grateful Network Creation"
 description: |
   Building a Grateful Dead Original Song Co-Writing Network in R
-preview: images/sharpe-ratio.png
+preview: gd-network-creation_files/figure-html5/unnamed-chunk-19-1.png
 categories:
   - network creation
   - network analytics
@@ -20,6 +20,7 @@ output:
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
+
 
 # Network Details
 
