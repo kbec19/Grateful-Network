@@ -6,6 +6,7 @@ preview: gd-network-creation_files/figure-html5/unnamed-chunk-19-1.png
 categories:
   - network creation
   - network analytics
+  - network visualization
 author:
   - name: Kristina Becvar
     url: http://gratefulnetwork.live/
@@ -27,13 +28,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 For my project, I am using the Grateful Dead song writers data set that I used in [this series of posts](https://www.kristinabecvar.com/blog.html#category:grateful_network){target="_blank"} from my Social & Political Networks course to examine the network features of the co-writers of original Grateful Dead songs.
 
-The data set consists of the contributors to the original songs played by the Grateful Dead over their 30-year touring career that I compiled. 
+The data set consists of the links between co-writers of songs played by the Grateful Dead over their 30-year touring career that I compiled. 
 
 There are 26 songwriters that contributed to the songs played over the course of the Grateful Dead history, resulting in 26 nodes in the dataset.
 
-There are a total of 183 (updated and still under review!) unique songs played, and the various combinations of co-writing combinations are represented in a binary affiliation matrix. 
+There are a total of 183 (updated and still under review!) unique songs played in the course of their touring career, and the various combinations of co-writing combinations are now represented in a binary affiliation matrix. 
 
-I have not weighted this version of the data; I have considered using various measures as network weights, but in the end they have all been attributes and not weights. Unless there is a new metric that rises to the forefront of my analysis, this network will continue to be unweighted. 
+I have considered using various measures as network weights, but in the end they have all been attributes and not weights. Unless there is a new metric that rises to the forefront of my analysis, this network will continue to be an unweighted, bipartite matrix. 
 
 ```{r echo=FALSE, results=FALSE}
 
@@ -48,14 +49,6 @@ library(tidyverse)
 suppressWarnings(expr)
 
 ```
-
-In this example, I used a node list where unique IDs are numbers which correspond to the name of a songwriter. 
-
-The edgelist is in a separate spreadsheet where the  first two columns are the IDs of the source and the target node (songwriter ID), regardless of whether the network is directed, for each edge. Each row contains an observation of a connection between writers for a given song, and since there are multiple collaborations, there may be multiple rows of writer combinations for a given song ID. If there was only one writer on a song, that songwriter's ID is indicated in both the source and target column for that song.
-
-The following columns are edge attributes. In my edgelist, I have the two songwriters representing the co-writing relationship in columns "1" and "2", the song ID in column "3", the song name in column "4", and the number of times the corresponding song was played live is indicated in column "5".
-
-I have NOT utilized the number of times the song was played live as a network weight at this point. Additionally, this edgelist format is not the ideal format, but it is the first step in the process I am working through to utilize different methods of working through the data. In the next post, I will use the data in the form of an affiliation matrix.
 
 ## Affiliation Matrix
 
@@ -88,7 +81,7 @@ gd_projection["Jerry Garcia", "Robert Hunter"]
 gd_projection["John Barlow", "Bob Weir"]
 ```
 
-### igraph
+### Igraph
 
 Converting network data into igraph object using the "graph_from_incidence_matrix()" function gave me all songwriters and songs as total vertices. Graphing after the bipartite projection allowed a more accurate network.
 
@@ -100,7 +93,7 @@ gd_igraph <- graph.adjacency(gd_projection,mode="undirected") #igraph object
 
 ```
 
-### statnet
+### Statnet
 
 Coercing directly from the original affiliation matrix kept giving the error, *"Error: `loops` is `FALSE`, but `x` contains loops."* I tried using the "intergraph" package, but it cannot coerce bipartite igraph networks. 
 

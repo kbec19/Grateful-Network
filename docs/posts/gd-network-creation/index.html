@@ -113,7 +113,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","preview","categories","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Grateful Network Creation"]},{"type":"character","attributes":{},"value":["Building a Grateful Dead Original Song Co-Writing Network in R"]},{"type":"character","attributes":{},"value":["gd-network-creation_files/figure-html5/unnamed-chunk-19-1.png"]},{"type":"character","attributes":{},"value":["network creation","network analytics"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Kristina Becvar"]},{"type":"character","attributes":{},"value":["http://gratefulnetwork.live/"]},{"type":"character","attributes":{},"value":["UMass DACSS Program (My Academic Blog Link)"]},{"type":"character","attributes":{},"value":["https://kristinabecvar.com"]}]}]},{"type":"character","attributes":{},"value":["04-20-2022"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc"]}},"value":[{"type":"logical","attributes":{},"value":[true]}]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","preview","categories","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Grateful Network Creation"]},{"type":"character","attributes":{},"value":["Building a Grateful Dead Original Song Co-Writing Network in R"]},{"type":"character","attributes":{},"value":["gd-network-creation_files/figure-html5/unnamed-chunk-19-1.png"]},{"type":"character","attributes":{},"value":["network creation","network analytics","network visualization"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Kristina Becvar"]},{"type":"character","attributes":{},"value":["http://gratefulnetwork.live/"]},{"type":"character","attributes":{},"value":["UMass DACSS Program (My Academic Blog Link)"]},{"type":"character","attributes":{},"value":["https://kristinabecvar.com"]}]}]},{"type":"character","attributes":{},"value":["04-20-2022"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc"]}},"value":[{"type":"logical","attributes":{},"value":[true]}]}]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -3109,6 +3109,7 @@ distill-header .nav a {
 <div class="dt-tags">
   <a href="../../index.html#category:network_creation" class="dt-tag">network creation</a>
   <a href="../../index.html#category:network_analytics" class="dt-tag">network analytics</a>
+  <a href="../../index.html#category:network_visualization" class="dt-tag">network visualization</a>
 </div>
 <!--/radix_placeholder_categories-->
 <p><p>Building a Grateful Dead Original Song Co-Writing Network in
@@ -3133,8 +3134,8 @@ Academic Blog Link))<a href="https://kristinabecvar.com" class="uri">https://kri
 <li><a href="#affiliation-matrix">Affiliation Matrix</a>
 <ul>
 <li><a href="#bipartite-projection">Bipartite Projection</a></li>
-<li><a href="#igraph">igraph</a></li>
-<li><a href="#statnet">statnet</a></li>
+<li><a href="#igraph">Igraph</a></li>
+<li><a href="#statnet">Statnet</a></li>
 </ul></li>
 <li><a href="#network-analysis-igraph">Network Analysis: IGraph</a>
 <ul>
@@ -3172,43 +3173,23 @@ Census</a></li>
 that I used in <a href="https://www.kristinabecvar.com/blog.html#category:grateful_network" target="_blank">this series of posts</a> from my Social &amp; Political
 Networks course to examine the network features of the co-writers of
 original Grateful Dead songs.</p>
-<p>The data set consists of the contributors to the original songs
-played by the Grateful Dead over their 30-year touring career that I
+<p>The data set consists of the links between co-writers of songs played
+by the Grateful Dead over their 30-year touring career that I
 compiled.</p>
 <p>There are 26 songwriters that contributed to the songs played over
 the course of the Grateful Dead history, resulting in 26 nodes in the
 dataset.</p>
 <p>There are a total of 183 (updated and still under review!) unique
-songs played, and the various combinations of co-writing combinations
-are represented in a binary affiliation matrix.</p>
-<p>I have not weighted this version of the data; I have considered using
-various measures as network weights, but in the end they have all been
-attributes and not weights. Unless there is a new metric that rises to
-the forefront of my analysis, this network will continue to be
-unweighted.</p>
+songs played in the course of their touring career, and the various
+combinations of co-writing combinations are now represented in a binary
+affiliation matrix.</p>
+<p>I have considered using various measures as network weights, but in
+the end they have all been attributes and not weights. Unless there is a
+new metric that rises to the forefront of my analysis, this network will
+continue to be an unweighted, bipartite matrix.</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p>In this example, I used a node list where unique IDs are numbers
-which correspond to the name of a songwriter.</p>
-<p>The edgelist is in a separate spreadsheet where the first two columns
-are the IDs of the source and the target node (songwriter ID),
-regardless of whether the network is directed, for each edge. Each row
-contains an observation of a connection between writers for a given
-song, and since there are multiple collaborations, there may be multiple
-rows of writer combinations for a given song ID. If there was only one
-writer on a song, that songwriter’s ID is indicated in both the source
-and target column for that song.</p>
-<p>The following columns are edge attributes. In my edgelist, I have the
-two songwriters representing the co-writing relationship in columns “1”
-and “2”, the song ID in column “3”, the song name in column “4”, and the
-number of times the corresponding song was played live is indicated in
-column “5”.</p>
-<p>I have NOT utilized the number of times the song was played live as a
-network weight at this point. Additionally, this edgelist format is not
-the ideal format, but it is the first step in the process I am working
-through to utilize different methods of working through the data. In the
-next post, I will use the data in the form of an affiliation matrix.</p>
 <h2 id="affiliation-matrix">Affiliation Matrix</h2>
 <p>Loading the dataset and creating the network to begin my
 analysis:</p>
@@ -3320,7 +3301,7 @@ Show code
 </details>
 <pre><code>[1] 21</code></pre>
 </div>
-<h3 id="igraph">igraph</h3>
+<h3 id="igraph">Igraph</h3>
 <p>Converting network data into igraph object using the
 “graph_from_incidence_matrix()” function gave me all songwriters and
 songs as total vertices. Graphing after the bipartite projection allowed
@@ -3339,7 +3320,7 @@ Show code
 </div>
 </details>
 </div>
-<h3 id="statnet">statnet</h3>
+<h3 id="statnet">Statnet</h3>
 <p>Coercing directly from the original affiliation matrix kept giving
 the error, <em>“Error: <code>loops</code> is <code>FALSE</code>, but
 <code>x</code> contains loops.”</em> I tried using the “intergraph”
