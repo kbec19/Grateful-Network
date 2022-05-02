@@ -8,7 +8,7 @@ categories:
   - network analytics
 author:
   - name: Kristina Becvar
-    url: https://kbec19.github.io/Grateful-Network/
+    url: http://gratefulnetwork.live/
     affiliation: UMass DACSS Program (My Academic Blog Link)
     affiliation_url: https://kristinabecvar.com
 date: 04-20-2022
@@ -20,7 +20,6 @@ output:
 ```{r setup, include=FALSE} 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
-
 
 # Network Details
 
@@ -107,7 +106,7 @@ Coercing directly from the original affiliation matrix kept giving the error, *"
 
 ![](Picture1.png)
 
-After the bipartite projection, I was able to create the statnet object as well.
+After the bipartite projection, I was able to create the statnet object as well. I'll come back to that later.
 
 ```{r code_folding=TRUE}
 set.seed(11)
@@ -124,6 +123,8 @@ set.seed(11)
 
 gd_statnet <- network(gd_projection, directed=F, matrix.type="adjacency", bipartite = TRUE) #statnet object
 ```
+
+## Network Analysis: IGraph
 
 Now to check the vertices in the graph I've created to ensure they represent the data accurately, and confirm that all of the attributes have been represented properly (the graph is undirected, unweighted, and is bipartite):
 
@@ -149,7 +150,7 @@ plot(gd_igraph)
 
 ```
 
-## Network Analysis: igraph
+### Igraph Triad Check
 
 Knowing this network has 26 vertices, I want to see if the triad census is working correctly by comparing the following data, which I can confirm it is here!
 
@@ -161,6 +162,8 @@ Knowing this network has 26 vertices, I want to see if the triad census is worki
 sum(igraph::triad.census(gd_igraph))
 
 ```
+
+### Igraph Transitivity
 
 Looking next at the global v. average local transitivity of the network:
 
@@ -175,6 +178,8 @@ transitivity(gd_igraph, type="average")
 
 This transitivity tells me that the average network transitivity is significantly higher than the global transitivity, indicating, from my still naive network knowledge, that the overall network is generally more loose, and that there is a more connected sub-network.
 
+### Igraph Geodesic Distance
+
 Looking at the geodesic distance tells me that on average, the path length is just over 2.
 
 ```{r code_folding=TRUE}
@@ -182,6 +187,8 @@ Looking at the geodesic distance tells me that on average, the path length is ju
 average.path.length(gd_igraph,directed=F)
 
 ```
+
+### Igraph Components
 
 Getting a look at the components of the network shows that there are 2 components in the network, and 25 of the 26 nodes make up the giant component with 1 isolate.
 
@@ -195,6 +202,8 @@ igraph::components(gd_igraph)$csize
 
 This is a great start - now I can get to looking at the network density, centrality, and centralization.
 
+### Igraph Density
+
 The network density measure: First with just the call "graph.density" and then with adding "loops=TRUE". Since I'm using igraph, I know that its' default output assumes that loops are not included but does not remove them, which can be corrected with the addition of "loops=TRUE" per the course tutorials when comparing output to statnet. This gives me confidence that my network density is closer to 2.1.
 
 ```{r code_folding=TRUE}
@@ -203,6 +212,8 @@ graph.density(gd_igraph)
 graph.density(gd_igraph, loops=TRUE)
 
 ```
+### Igraph Degree Measure
+
 The network degree measure: This gives me a clear output showing the degree of each particular node (songwriter). It is not suprising, knowing my subject matter, that Jerry Garcia is the highest degree node in this network as the practical and figurative head of the band. The other band members' degree measures are not necessarily what I expected, though. I did not anticipate that his songwriting partner, Robert Hunter, would have a lower degree than band members Phil Lesh and Bob Weir. Further, I did not anticipate that the degree measure of band member 'Pigpen' would be so high given his early death in the first years of the band's touring life.
 
 ```{r code_folding=TRUE}
@@ -221,6 +232,8 @@ grateful_igraph
 
 ```
 
+### Igraph Summary Statistics
+
 A quick look at the summary statistics confirms for me the minimum, maximum, median, and mean node degree data.
 
 ```{r code_folding=TRUE}
@@ -228,6 +241,8 @@ A quick look at the summary statistics confirms for me the minimum, maximum, med
 summary(grateful_igraph)
 
 ```
+
+### Igraph Network Visualizations
 
 Now I want to take a step back and try to visually represent this data better.
 
@@ -277,7 +292,7 @@ ggraph(gd_igraph, layout = "fr") +
 
 ```
 
-## Centrality Scores: Igraph
+### Igraph Centrality Measures
 
 To examine the centrality and power scores of the nodes, I created a data frame with the centrality degree, normalized centrality, Bonacich power, Eigenvector centrality scores and the breakdown of reflected and derived centrality scores. I later added the closeness, betweenness, and Burt centrality scores.
 
@@ -323,7 +338,7 @@ Right away, I see the highest degree are clearly Jerry Garcia and Robert Hunter,
 
 The original lineup of Jerry Garcia, Bob Weir, Phil Lesh, Bill Kreutzmann, and Pigpen as well as Robert Hunter's presence in the formative years of the band's most collaborative era, means that this degree ranking makes sense intuitively.
 
-## Eigenvector Centrality
+#### Eigenvector Centrality
 
 I am also interested in the Eigenvector centrality scores - Both the top as well as the lowest value scores.
 
@@ -339,7 +354,7 @@ Robert Hunter having the top Eigenvector centrality score is not a shock - he ha
 
 It is a little surprising, though, that the Eigenvector scores fall off so quickly after Robert Hunter and Jerry Garcia.
 
-## Closeness
+#### Closeness
 
 The closeness centrality of a node is defined as the sum of the geodesic distances between that node and all other nodes in a network. 
 
@@ -360,7 +375,7 @@ centr_clo(gd_igraph)$centralization
 
 ```
 
-## Betweenness
+#### Betweenness
 
 Betweenness represents the number of geodesics on which a node sits. 
 
@@ -381,7 +396,7 @@ I can make a guess that the two highest degree nodes, Jerry Garcia and Robert Hu
 
 Similarly, Phil Lesh and Pigpen, original band members who wrote relatively fewer songs, contributed to more songs that were written by the entire band, giving them more exposure to connections on the songs that they did write.
 
-## Top Closeness
+#### Top Closeness
 
 Now a look at the top closeness scores:
 
@@ -395,7 +410,7 @@ centrality_gd_igraph %>%
 
 This evaluation is more difficult as the range is made up of much less clearly defined scores.
 
-## Network Constraint (Burt)
+#### Network Constraint (Burt)
 
 Constraint is a measure of the redundancy of a node’s connections. It is bound between 0 and 1, with 0 being a complete lack, and 1 being complete redundancy.
 
@@ -431,11 +446,10 @@ After all the closeness calculations, I saved the data frame for further analysi
 How about the statnet object
 
 ```{r code_folding=TRUE}
-
 print(gd_statnet)
-
 ```
 
+### Statnet Attributes
 
 Next, looking at the network basics. For some reason, statnet is recognizing the network as bipartite but it is listing the nodes from each sde of the projection, so they are listed twice.
 
@@ -454,6 +468,7 @@ head(gd_statnet %e% "LDC_topic")
 
 ```
 
+### Statnet Dyad & Triad Census
 
 ```{r code_folding=TRUE}
 #List network attributes: statnet
@@ -462,11 +477,14 @@ sna::dyad.census(gd_statnet)
 sna::triad.census(gd_statnet)
 ```
 
-```{r code_folding=TRUE}
+### Statnet Transitivity
 
+```{r code_folding=TRUE}
 #network transitivity: statnet
 gtrans(gd_statnet)
 ```
+
+### Statnet Network Density
 
 ```{r code_folding=TRUE}
 
@@ -474,10 +492,7 @@ network.density(gd_statnet)
 
 ```
 
-```{r code_folding=TRUE}
-sna::degree(gd_statnet)
-
-```
+### Statnet Degree Summary
 
 ```{r code_folding=TRUE}
 
@@ -487,24 +502,12 @@ head(stat_nodes)
 summary(stat_nodes)
 ```
 
-```{r}
+### Statnet Evaluation
 
-isolates(gd_statnet)
-```
+I'm not confident that the bipartite projection has led to an accurate network in the Statnet object. I wlil have to do further analysis and come back to the Statnet issue.
 
-#### Statnet
 
-```{r code_folding=TRUE}
 
-#create a dataframe of the total, in and out-degree of nodes in the stat network
-gd_stat_nodes <- data.frame(name=gd_statnet%v%"vertex.names",
-    totdegree=sna::degree(gd_statnet),
-    indegree=sna::degree(gd_statnet, cmode="indegree"),
-    outdegree=sna::degree(gd_statnet, cmode="outdegree"))
-
-#sort the top total degree of nodes in the stat network
-arrange(gd_stat_nodes, desc(totdegree))%>%slice(1:5)
-```
 
 
 
