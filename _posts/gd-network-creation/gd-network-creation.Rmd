@@ -1,7 +1,7 @@
 ---
-title: "Grateful Network Creation"
+title: "Grateful Network Creation: igraph"
 description: |
-  Building a Grateful Dead Original Song Co-Writing Network in R
+  Building a Grateful Dead Original Song Co-Writing Network in R Using the igraph Package
 preview: gd-network-creation_files/figure-html5/unnamed-chunk-19-1.png
 categories:
   - network creation
@@ -41,10 +41,9 @@ I have considered using various measures as network weights, but in the end they
 library(ggplot2) 
 library(readr) 
 library(igraph)
-library(statnet)
 library(ggraph)
 library(tidyverse)
-
+library(ergm)
 
 suppressWarnings(expr)
 
@@ -55,7 +54,6 @@ suppressWarnings(expr)
 Loading the dataset and creating the network to begin my analysis:
 
 ```{r code_folding=TRUE}
-gd_nodes <- read.csv('gd_nodes.csv', row.names = 1, header = TRUE, check.names = FALSE)
 gd_affiliation <- read.csv('gd_affiliation_matrix.csv', row.names = 1, header = TRUE, check.names = FALSE)
 gd_matrix <- as.matrix(gd_affiliation)
 ```
@@ -81,151 +79,180 @@ gd_projection["Jerry Garcia", "Robert Hunter"]
 gd_projection["John Barlow", "Bob Weir"]
 ```
 
-### Igraph
+### igraph
+
+#### From Incidence Matrix
 
 Converting network data into igraph object using the "graph_from_incidence_matrix()" function gave me all songwriters and songs as total vertices. Graphing after the bipartite projection allowed a more accurate network.
 
 ```{r code_folding=TRUE}
 set.seed(11)
-#gd_igraph <- graph_from_incidence_matrix(gd_matrix, directed = FALSE)
-
-gd_igraph <- graph.adjacency(gd_projection,mode="undirected") #igraph object
-
+gd_igraph_from_im <- graph_from_incidence_matrix(gd_affiliation, directed = FALSE)
 ```
 
-### Statnet
+#### From Adjacency Matrix
 
-Coercing directly from the original affiliation matrix kept giving the error, *"Error: `loops` is `FALSE`, but `x` contains loops."* I tried using the "intergraph" package, but it cannot coerce bipartite igraph networks. 
-
-![](Picture1.png)
-
-After the bipartite projection, I was able to create the statnet object as well. I'll come back to that later.
+Converting network data into igraph object using the "graph_from_incidence_matrix()" function gave me all songwriters and songs as total vertices. Graphing after the bipartite projection allowed a more accurate network.
 
 ```{r code_folding=TRUE}
 set.seed(11)
-#gd_statnet <- as.network(gd_affiliation,
-               #directed = FALSE, 
-               #bipartite = TRUE,
-               #loops = FALSE)
-
-#library(intergraph)
-#gd_intergraph <- asNetwork(gd_igraph)
-#print(gd_intergraph)
-
-#detach("package:statnet")
-
-gd_statnet <- network(gd_projection, directed=F, matrix.type="adjacency", bipartite = TRUE) #statnet object
+gd_igraph_adj <- graph.adjacency(gd_projection,mode="undirected")
 ```
 
-## Network Analysis: IGraph
+## Network Analysis: igraph
 
 Now to check the vertices in the graph I've created to ensure they represent the data accurately, and confirm that all of the attributes have been represented properly (the graph is undirected, unweighted, and is bipartite):
 
+### From Incidence Matrix
+
 ```{r echo=TRUE}
 
-head(V(gd_igraph)$name)
-head(V(gd_igraph)$type)
+head(V(gd_igraph_from_im)$name)
+head(V(gd_igraph_from_im)$type)
 
-is_directed(gd_igraph)
-is_weighted(gd_igraph)
-is_bipartite(gd_igraph)
+is_directed(gd_igraph_from_im)
+is_weighted(gd_igraph_from_im)
+is_bipartite(gd_igraph_from_im)
 
-igraph::vertex_attr_names(gd_igraph)
-igraph::edge_attr_names(gd_igraph)
+igraph::vertex_attr_names(gd_igraph_from_im)
+igraph::edge_attr_names(gd_igraph_from_im)
 
 ```
 
-Next I want to take a first look at the network:
+Graphing directly from the incidence matrix gives a bipartite network, but when visualizing the network it is not clear if this is the way I want to represent this data.
+
+```{r code_folding = TRUE}
+plot(gd_igraph_from_im, layout=layout.bipartite)
+```
+
+### From Adjacency Matrix (Bipartite Projection)
+
+```{r echo=TRUE}
+head(V(gd_igraph_adj)$name)
+head(V(gd_igraph_adj)$type)
+
+is_directed(gd_igraph_adj)
+is_weighted(gd_igraph_adj)
+is_bipartite(gd_igraph_adj)
+
+igraph::vertex_attr_names(gd_igraph_adj)
+igraph::edge_attr_names(gd_igraph_adj)
+```
+
+Graphing from the bipartite projection and using the graph from adjacency matrix function, I have a network of the songwriters only, but I need to do more digging to see if this is the best way to represent the data.
 
 ```{r code_folding=TRUE}
-
-plot(gd_igraph)
-
+plot(gd_igraph_adj)
 ```
 
-### Igraph Triad Check
+### Triad Check
 
-Knowing this network has 26 vertices, I want to see if the triad census is working correctly by comparing the following data, which I can confirm it is here!
+Knowing this network has 26 vertices, I want to see if the triad census is working correctly by comparing the following data:
 
 ```{r code_folding=TRUE}
 
 #possible triads in network
 26*25*24/6
 
-sum(igraph::triad.census(gd_igraph))
+sum(igraph::triad.census(gd_igraph_from_im))
 
 ```
 
-### Igraph Transitivity
+The igraph created from the incidence matrix is NOT representing the triad census properly.
+
+
+```{r code_folding=TRUE}
+
+#possible triads in network
+26*25*24/6
+
+sum(igraph::triad.census(gd_igraph_adj))
+
+```
+
+The igraph network created from the adjacency matrix is representing the triad census is working the way it should be.
+
+### Transitivity
 
 Looking next at the global v. average local transitivity of the network:
 
 ```{r code_folding=TRUE}
 
 #get global clustering cofficient: igraph
-transitivity(gd_igraph, type="global")
+transitivity(gd_igraph_from_im, type="global")
 #get average local clustering coefficient: igraph
-transitivity(gd_igraph, type="average")
+transitivity(gd_igraph_from_im, type="average")
+
+```
+
+This is another good sign that the correct choice is to graph from the adjacency matrix throug the bipartite projection going forward.
+
+```{r code_folding=TRUE}
+
+#get global clustering cofficient: igraph
+transitivity(gd_igraph_adj, type="global")
+#get average local clustering coefficient: igraph
+transitivity(gd_igraph_adj, type="average")
 
 ```
 
 This transitivity tells me that the average network transitivity is significantly higher than the global transitivity, indicating, from my still naive network knowledge, that the overall network is generally more loose, and that there is a more connected sub-network.
 
-### Igraph Geodesic Distance
+### Geodesic Distance
 
 Looking at the geodesic distance tells me that on average, the path length is just over 2.
 
 ```{r code_folding=TRUE}
 
-average.path.length(gd_igraph,directed=F)
+average.path.length(gd_igraph_adj,directed=F)
 
 ```
 
-### Igraph Components
+### Components
 
 Getting a look at the components of the network shows that there are 2 components in the network, and 25 of the 26 nodes make up the giant component with 1 isolate.
 
 ```{r code_folding=TRUE}
 
-names(igraph::components(gd_igraph))
-igraph::components(gd_igraph)$no 
-igraph::components(gd_igraph)$csize
+names(igraph::components(gd_igraph_from_im))
+igraph::components(gd_igraph_from_im)$no 
+igraph::components(gd_igraph_from_im)$csize
 
 ```
 
 This is a great start - now I can get to looking at the network density, centrality, and centralization.
 
-### Igraph Density
+### Density
 
 The network density measure: First with just the call "graph.density" and then with adding "loops=TRUE". Since I'm using igraph, I know that its' default output assumes that loops are not included but does not remove them, which can be corrected with the addition of "loops=TRUE" per the course tutorials when comparing output to statnet. This gives me confidence that my network density is closer to 2.1.
 
 ```{r code_folding=TRUE}
 
-graph.density(gd_igraph)
-graph.density(gd_igraph, loops=TRUE)
+graph.density(gd_igraph_adj)
+graph.density(gd_igraph_adj, loops=TRUE)
 
 ```
-### Igraph Degree Measure
+### Degree Measure
 
 The network degree measure: This gives me a clear output showing the degree of each particular node (songwriter). It is not suprising, knowing my subject matter, that Jerry Garcia is the highest degree node in this network as the practical and figurative head of the band. The other band members' degree measures are not necessarily what I expected, though. I did not anticipate that his songwriting partner, Robert Hunter, would have a lower degree than band members Phil Lesh and Bob Weir. Further, I did not anticipate that the degree measure of band member 'Pigpen' would be so high given his early death in the first years of the band's touring life.
 
 ```{r code_folding=TRUE}
 
-igraph::degree(gd_igraph)
+igraph::degree(gd_igraph_adj)
 
 ```
 
-To look further I will create a dataframe for easier review going forward.
+To look further I will begin creating a dataframe for easier review going forward.
 
 ```{r code_folding=TRUE}
 
-grateful_igraph<-data.frame(name=V(gd_igraph)$name, degree=igraph::degree(gd_igraph))
+grateful_igraph<-data.frame(name=V(gd_igraph_adj)$name, degree=igraph::degree(gd_igraph_adj))
 
 grateful_igraph
 
 ```
 
-### Igraph Summary Statistics
+### Summary Statistics
 
 A quick look at the summary statistics confirms for me the minimum, maximum, median, and mean node degree data.
 
@@ -235,23 +262,23 @@ summary(grateful_igraph)
 
 ```
 
-### Igraph Network Visualizations
+### Network Visualizations
 
 Now I want to take a step back and try to visually represent this data better.
 
 ```{r code_folding=TRUE}
 
 # Community detection algoritm 
-community <- cluster_louvain(gd_igraph) 
+community <- cluster_louvain(gd_igraph_adj) 
 
 # Attach communities to relevant vertices
-V(gd_igraph)$color <- community$membership 
+V(gd_igraph_adj)$color <- community$membership 
 
 # Graph layout
-layout <- layout.random(gd_igraph) 
+layout <- layout.random(gd_igraph_adj) 
 
 # igraph plot 
-plot(gd_igraph, layout = layout)
+plot(gd_igraph_adj, layout = layout)
 
 ```
 
@@ -259,13 +286,13 @@ Better, but not quite.
 
 ```{r code_folding=TRUE}
 
-ggraph(gd_igraph, layout = "fr") +
+ggraph(gd_igraph_adj, layout = "fr") +
   geom_edge_link() + 
   geom_node_point(aes(color = factor(color))) + 
   geom_node_text(aes(label = name), repel = TRUE) +
   theme_void() +
   theme(legend.position = "none") 
-
+ggsave("igraph2.pdf", device="pdf", width=8, height=8, units="in",dpi=600)
 ```
 
 That is starting to look more meaningful!
@@ -273,31 +300,31 @@ That is starting to look more meaningful!
 ```{r echo=TRUE}
 
 # Set size to degree centrality 
-V(gd_igraph)$size = degree(grateful_igraph)
+V(gd_igraph_adj)$size = degree=igraph::degree(gd_igraph_adj)
 
-# Additional customisation for better legibility 
-ggraph(gd_igraph, layout = "fr") +
+#Additional customisation for better legibility 
+ggraph(gd_igraph_adj, layout = "fr") +
   geom_edge_arc(strength = 0.2, width = 0.5, alpha = 0.15) + 
   geom_node_point(aes(size = size, color = factor(color))) + 
   geom_node_text(aes(label = name, size = size), repel = TRUE) +
   theme_void() +
   theme(legend.position = "none") 
-
 ```
 
-### Igraph Centrality Measures
+### Centrality Measures
 
-To examine the centrality and power scores of the nodes, I created a data frame with the centrality degree, normalized centrality, Bonacich power, Eigenvector centrality scores and the breakdown of reflected and derived centrality scores. I later added the closeness, betweenness, and Burt centrality scores.
+To examine the centrality and power scores of the nodes, I created a data frame with the centrality degree, normalized centrality, Bonacich power, rescaled Bonacich power, Eigenvector centrality scores and the breakdown of reflected and derived centrality scores. I later added the closeness, betweenness, and Burt centrality scores.
 
 To calculate the reflected and derived centrality scores, I first run some operations on the adjacency matrix and keep in mind that these two scores make up the entire calculation of the Eigenvector centrality score. 
 
 ```{r code_folding=TRUE}
 
-gd_adjacency <- as.matrix(as_adjacency_matrix(gd_igraph))
+gd_adjacency <- as.matrix(as_adjacency_matrix(gd_igraph_adj))
 gd_adjacency_2 <- gd_adjacency %*% gd_adjacency
 
 #calculate Bonacich power
-#bp_ig1 <- bonpow(gd_igraph) #with a default index of "1"
+bp_ig1 <- power_centrality(gd_igraph_adj) #with a default index of "1"
+bp_ig2 <- power_centrality(gd_igraph_adj, rescale = TRUE) #rescaled so they sum to "1"
 
 #calculate portion of reflected centrality
 gd_reflective <- diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
@@ -308,13 +335,13 @@ gd_derived <- 1-diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2
 gd_derived <- ifelse(is.nan(gd_derived),1,gd_derived)
 
 #calculate closeness centrality: igraph
-igraph::closeness(gd_igraph)
+igraph::closeness(gd_igraph_adj)
 
 #calculate betweenness centrality: igraph
-igraph::betweenness(gd_igraph, directed=FALSE)
+igraph::betweenness(gd_igraph_adj, directed=FALSE)
 
 #calculate Burt's network constraint
-constraint(gd_igraph)
+constraint(gd_igraph_adj)
 
 #I am loading the data frame of all of these values from previous pre-knitr runs
 
@@ -322,7 +349,7 @@ centrality_gd_igraph <- read.csv("centrality_df.csv")
 
 row.names(centrality_gd_igraph)<-NULL
 centrality_gd_igraph%>%
-  arrange(desc(degree_all))%>%
+  arrange(desc(degree))%>%
   slice(1:5)
 
 ```
@@ -338,7 +365,7 @@ I am also interested in the Eigenvector centrality scores - Both the top as well
 ```{r code_folding=TRUE}
 
 centrality_gd_igraph%>%
-  arrange(desc(EV_cent))%>%
+  arrange(desc(eigenvector))%>%
   slice(1:5)
 
 ```
@@ -354,17 +381,19 @@ The closeness centrality of a node is defined as the sum of the geodesic distanc
 ```{r, echo=TRUE}
 
 centrality_gd_igraph%>%
-  arrange(desc(close))%>%
+  arrange(desc(closeness))%>%
   slice(1:5)
 
 ```
 
-In addition to node-level centrality scores, I also want to calculate the network level centralization index for closeness centrality measures.  Again, I get a warning that closeness centrality is not well-defined for disconnected graphs.
+This evaluation is more difficult as the range is made up of much less clearly defined scores.
+
+In addition to node-level centrality scores, I also want to calculate the network level centralization index for closeness centrality measures.  Originally, I got a warning that closeness centrality is not well-defined for disconnected graphs. After re-running the commands, I get a network level closeness measure of 0.231.
 
 ```{r, echo=TRUE}
 
 #calculate closeness centralization index: igraph
-centr_clo(gd_igraph)$centralization
+centr_clo(gd_igraph_adj)$centralization
 
 ```
 
@@ -378,7 +407,7 @@ Now I want to add the closeness and betweenness to my centrality data frame and 
 
 row.names(centrality_gd_igraph)<-NULL
 centrality_gd_igraph%>%
-  arrange(desc(between))%>%
+  arrange(desc(betweenness))%>%
   slice(1:5)
 
 ```
@@ -388,20 +417,6 @@ The most immediate observations I have is that the highest degree node (Jerry Ga
 I can make a guess that the two highest degree nodes, Jerry Garcia and Robert Hunter, having relatively low betweenness scores can be linked to the fact that the two wrote mostly together. Although the pair wrote the most songs in the originals catalog, Bob Weir wrote many songs with a variety of other songwrriters; giving him a higher level of betweenness. 
 
 Similarly, Phil Lesh and Pigpen, original band members who wrote relatively fewer songs, contributed to more songs that were written by the entire band, giving them more exposure to connections on the songs that they did write.
-
-#### Top Closeness
-
-Now a look at the top closeness scores:
-
-```{r code_folding=TRUE}
-
-centrality_gd_igraph %>%
-  arrange(desc(close))%>%
-  slice(1:5)
-
-```
-
-This evaluation is more difficult as the range is made up of much less clearly defined scores.
 
 #### Network Constraint (Burt)
 
@@ -418,90 +433,20 @@ centrality_gd_igraph %>%
 After all the closeness calculations, I saved the data frame for further analysis.
 
 ```{r code_folding=TRUE}
-#centrality_gd_igraph <-data.frame(id=1:vcount(gd_network_ig),
-                        #name=V(gd_network_ig)$name,
-                        #degree_all=igraph::degree(gd_network_ig),
-                        #degree_norm=igraph::degree(gd_network_ig,normalized=T),
-                        #BC_power=power_centrality(gd_network_ig),
-                        #EV_cent=centr_eigen(gd_network_ig,directed = F)$vector,
-                        #reflect_EV=gd_reflective*centr_eigen(gd_network_ig,directed = F)$vector,
-                        #derive_EV=gd_derived*centr_eigen(gd_network_ig,directed = F)$vector,
-                        #close=closeness(gd_network_ig),
-                        #between=betweenness(gd_network_ig, directed=FALSE),
-                        #burt=constraint(gd_network_ig))
+#centrality_gd_igraph <-data.frame(id=1:vcount(gd_igraph_adj),
+                        #name=V(gd_igraph_adj)$name,
+                        #degree=igraph::degree(gd_igraph_adj),
+                        #normalized_degree=igraph::degree(gd_igraph_adj,normalized=T),
+                        #bonacich=power_centrality(gd_igraph_adj),
+                        #bonacich_scaled=power_centrality(gd_igraph_adj),
+                        #eigenvector=centr_eigen(gd_igraph_adj,directed = F)$vector,
+                        #reflect_eigen=gd_reflective*centr_eigen(gd_igraph_adj,directed = F)$vector,
+                        #derive_eigen=gd_derived*centr_eigen(gd_igraph_adj,directed = F)$vector,
+                        #closeness=closeness(gd_igraph_adj),
+                        #betweenness=betweenness(gd_igraph_adj, directed=FALSE),
+                        #burt=constraint(gd_igraph_adj))
 
 #write.csv(centrality_gd_igraph, file = "centrality_df.csv")
 
 ```
-
-## Network Analysis: Statnet
-
-How about the statnet object
-
-```{r code_folding=TRUE}
-print(gd_statnet)
-```
-
-### Statnet Attributes
-
-Next, looking at the network basics. For some reason, statnet is recognizing the network as bipartite but it is listing the nodes from each sde of the projection, so they are listed twice.
-
-```{r echo=TRUE}
-
-#List network attributes: statnet
-
-network::list.vertex.attributes(gd_statnet)
-network::list.edge.attributes(gd_statnet)
-
-
-head(gd_statnet %v% "na")
-gd_statnet %v% "vertex.names"
-head(gd_statnet %e% "LDC_topic")
-
-
-```
-
-### Statnet Dyad & Triad Census
-
-```{r code_folding=TRUE}
-#List network attributes: statnet
-
-sna::dyad.census(gd_statnet)
-sna::triad.census(gd_statnet)
-```
-
-### Statnet Transitivity
-
-```{r code_folding=TRUE}
-#network transitivity: statnet
-gtrans(gd_statnet)
-```
-
-### Statnet Network Density
-
-```{r code_folding=TRUE}
-
-network.density(gd_statnet)
-
-```
-
-### Statnet Degree Summary
-
-```{r code_folding=TRUE}
-
-stat_nodes<-data.frame(name=gd_statnet%v%"vertex.names", degree=sna::degree(gd_statnet))
-head(stat_nodes)
-
-summary(stat_nodes)
-```
-
-### Statnet Evaluation
-
-I'm not confident that the bipartite projection has led to an accurate network in the Statnet object. I wlil have to do further analysis and come back to the Statnet issue.
-
-
-
-
-
-
 

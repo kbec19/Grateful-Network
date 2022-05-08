@@ -1,0 +1,94 @@
+---
+title: "Grateful Dead Statnet Network Creation"
+description: |
+  Building a Grateful Dead Original Song Co-Writing Network in R using the Statnet Package
+categories:
+  - network creation
+  - network analytics
+  - network visualization
+author:
+  - name: Kristina Becvar
+    url: http://gratefulnetwork.live/
+    affiliation: UMass DACSS Program (My Academic Blog Link)
+    affiliation_url: https://kristinabecvar.com
+date: 2022-05-06
+output:
+  distill::distill_article:
+    toc: true
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r echo=FALSE, results=FALSE}
+
+library(ggplot2) 
+library(readr) 
+library(statnet)
+library(ggraph)
+library(tidyverse)
+library(ergm)
+
+suppressWarnings(expr)
+
+```
+
+## Affiliation Matrix
+
+Loading the dataset and creating the network to begin my analysis:
+
+```{r code_folding=TRUE}
+gd_affiliation <- read.csv('gd_affiliation_matrix.csv', row.names = 1, header = TRUE, check.names = FALSE)
+gd_matrix <- as.matrix(gd_affiliation)
+```
+
+Inspecting the first 8 columns of the data structure in the affiliation matrix format: 
+
+```{r code_folding=TRUE}
+dim(gd_matrix)
+gd_matrix[1:10, 1:4]
+```
+
+### Bipartite Projection
+
+Now I can create the single mode network and examine the bipartite projection. After converting the matrix to a square adjacency matrix, I can look at the full matrix.
+
+I can also call the adjacency matrix count for co-writing incidences between certain songwriters, such as between writing partners Jerry Garcia and Robert Hunter (78) and between John Barlow and Bob Weir (21).
+
+```{r code_folding=TRUE}
+gd_projection <- gd_matrix%*%t(gd_matrix)
+dim(gd_projection)
+gd_projection[1:10, 1:4]
+gd_projection["Jerry Garcia", "Robert Hunter"]
+gd_projection["John Barlow", "Bob Weir"]
+```
+
+### Statnet
+
+Coercing directly from the original affiliation matrix kept giving the error, *"Error: `loops` is `FALSE`, but `x` contains loops."* I tried using the "intergraph" package, but it cannot coerce bipartite igraph networks. 
+
+![](Picture1.png)
+
+After the bipartite projection, I was able to create the statnet object as well. I'll come back to that later.
+
+```{r code_folding=TRUE}
+set.seed(11)
+gd_statnet <- as.network(gd_projection,
+               directed = FALSE, 
+               bipartite = TRUE,
+               loops = TRUE)
+
+#library(intergraph)
+#gd_network_intergraph <- asNetwork(gd_igraph)
+#print(gd_network_intergraph)
+
+#detach("package:statnet")
+
+#gd_statnet <- network(gd_projection, directed=F, matrix.type="adjacency", bipartite = TRUE) #statnet object
+```
+
+
