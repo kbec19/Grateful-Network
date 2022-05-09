@@ -55,13 +55,14 @@ gd_matrix <- as.matrix(gd_affiliation)
 
 ```{r code_folding=TRUE}
 gd_projection <- gd_matrix%*%t(gd_matrix)
+write.csv(gd_projection, file = "gd_projection.csv")
 ```
 
 ## From Adjacency Matrix
 
 ```{r code_folding=TRUE}
 set.seed(11)
-gd_igraph <- graph.adjacency(gd_projection,mode="undirected")
+gd_igraph <- graph.adjacency(gd_projection,mode="undirected", weighted = NULL, )
 ```
 
 ### Basic Visualization

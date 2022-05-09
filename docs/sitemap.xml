@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
+  <url>
+    <loc>http://gratefulnetwork.live/about.html</loc>
+    <lastmod>2022-04-22T13:27:48-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://gratefulnetwork.live/</loc>
+    <lastmod>2022-04-22T12:47:01-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://gratefulnetwork.live/posts/igraph-analysis/</loc>
+    <lastmod>2022-05-09T16:52:58-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://gratefulnetwork.live/posts/gd-network-creation-statnet/</loc>
+    <lastmod>2022-05-09T16:46:44-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://gratefulnetwork.live/posts/gd-network-creation/</loc>
+    <lastmod>2022-05-09T16:54:04-04:00</lastmod>
+  </url>
+  <url>
+    <loc>http://gratefulnetwork.live/posts/welcome/</loc>
+    <lastmod>2022-05-09T16:54:23-04:00</lastmod>
+  </url>
+</urlset>
