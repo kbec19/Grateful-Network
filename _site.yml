@@ -2,6 +2,7 @@ name: "."
 title: "Grateful Network"
 description: |
   Grateful Network
+base_url: http://gratefulnetwork.live/
 output_dir: "docs"
 navbar:
   right:

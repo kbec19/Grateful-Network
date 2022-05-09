@@ -16,6 +16,7 @@ date: 2022-04-21
 output:
   distill::distill_article:
     toc: true
+    code_folding: true
 
 ---
 
@@ -33,7 +34,9 @@ library(statnet)
 library(ggraph)
 library(tidyverse)
 library(ergm)
-
+library(dplyr)
+library(corrr)
+library(magrittr)
 suppressWarnings(expr)
 
 ```
@@ -83,7 +86,10 @@ set.seed(11)
 gd_statnet <- as.network(gd_projection,
                directed = FALSE, 
                bipartite = FALSE,
-               loops = FALSE)
+               loops = FALSE,
+               connected = FALSE)
+
+network.stat<-network(gd_projection, directed=F, matrix.type="adjacency") 
 
 ```
 
@@ -158,11 +164,14 @@ network.density(gd_statnet)
 Calculating the total centrality degree as well as the "in-degree centrality" and "out-degree centrality" clearly uses a different scale than igraph. 
 
 ```{r code_folding=TRUE}
-
 gd_stat_nodes <- data.frame(name=gd_statnet%v%"vertex.names",
     totdegree=sna::degree(gd_statnet),
     indegree=sna::degree(gd_statnet, cmode="indegree"),
     outdegree=sna::degree(gd_statnet, cmode="outdegree"))
+rescaled_degree <- degree(gd_statnet, g=1, gmode="graph", 
+        diag=FALSE, tmaxdev=FALSE, 
+        cmode="freeman", rescale=TRUE)
+gd_stat_nodes$rescaled <- rescaled_degree
 #sort the top total degree of nodes in the stat network
 arrange(gd_stat_nodes, desc(totdegree))%>%slice(1:5)
 ```
@@ -175,15 +184,67 @@ I can understand how Bob Weir and Phil Lesh have high centrality despite lower s
 
 ## Closeness
 
-```{r}
-head(sna::closeness(gd_statnet, gmode="graph"))
-centralization(gd_statnet,FUN="closeness",mode="graph")
+```{r code_folding=TRUE}
+#calculate closeness
+close <- closeness(gd_statnet, gmode="graph")
+#add to nodes data frame
+gd_stat_nodes$closeness <- close
+#sort the top total degree of nodes in the stat network
+arrange(gd_stat_nodes, desc(closeness))%>%slice(1:5)
 ```
 
 ## Betweenness
 
 ```{r}
-
-sna::betweenness(gd_statnet, gmode="graph")
+#calculate betweenness
+between <- sna::betweenness(gd_statnet, gmode="graph")
+#add to nodes data frame
+gd_stat_nodes$betweenness <- between
+#sort the top total degree of nodes in the stat network
+arrange(gd_stat_nodes, desc(betweenness))%>%slice(1:5)
 
 ```
+
+## Eigenvector Centrality
+
+```{r}
+#calculate eigenvector centrality
+eigen <- sna::evcent(gd_statnet, gmode="graph")
+#add to nodes data frame
+gd_stat_nodes$eigenvector <- eigen
+#sort the top total degree of nodes in the stat network
+arrange(gd_stat_nodes, desc(eigenvector))%>%slice(1:5)
+```
+
+## Bonacich Power
+
+```{r}
+#calculate bonacich power
+bonpow <- sna::bonpow(gd_statnet, gmode="graph")
+#add to nodes data frame
+gd_stat_nodes$bonacich <- bonpow
+#sort the top total degree of nodes in the stat network
+arrange(gd_stat_nodes, desc(bonacich))%>%slice(1:5)
+```
+
+### Add as Attributes
+
+```{r code_folding=TRUE}
+
+gd_statnet %v% "degree"<- degree(gd_statnet)       # Degree centrality
+gd_statnet %v% "eigenvector"<- evcent(gd_statnet)       # Eigenvector centrality
+gd_statnet %v% "closeness"<- closeness(gd_statnet)    # Closeness centrality
+gd_statnet %v% "betweenness"<- betweenness(gd_statnet)  # Vertex betweenness centrality
+gd_statnet %v% "bonacich"<- bonpow(gd_statnet) # Bonacich power
+```
+
+## Correlations of Centrality Measures
+
+```{r code_folding=TRUE}
+correlations <- gd_stat_nodes %>% 
+  select(totdegree,eigenvector,betweenness,bonacich)%>%
+  correlate() %>%
+  rearrange()
+fashion(correlations)
+```
+
