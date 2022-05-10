@@ -2,7 +2,7 @@
 title: "Grateful Network Creation: igraph"
 description: |
   Building a Grateful Dead Original Song Co-Writing Network in R Using the igraph Package
-preview: gd-network-creation_files/figure-html5/unnamed-chunk-19-1.png
+preview: graph1.png
 categories:
   - network creation
   - network analytics
@@ -30,11 +30,11 @@ For my project, I am using the Grateful Dead song writers data set that I used i
 
 The data set consists of the links between co-writers of songs played by the Grateful Dead over their 30-year touring career that I compiled. 
 
-There are 26 songwriters that contributed to the songs played over the course of the Grateful Dead history, resulting in 26 nodes in the dataset.
+There are 25 songwriters that contributed to the songs played over the course of the Grateful Dead history, resulting in 25 nodes in the dataset.
 
-There are a total of 183 (updated and still under review!) unique songs played in the course of their touring career, and the various combinations of co-writing combinations are now represented in a binary affiliation matrix. 
+There are a total of 181 (updated and still under review!) unique songs played in the course of their touring career, and the various combinations of co-writing combinations are now represented in a binary affiliation matrix. 
 
-I have considered using various measures as network weights, but in the end they have all been attributes and not weights. Unless there is a new metric that rises to the forefront of my analysis, this network will continue to be an unweighted, bipartite matrix. 
+I have considered using various measures as network weights, but in the end they have all been attributes and not weights. Unless there is a new metric that rises to the forefront of my analysis, this network will continue to begin analysis as an un-weighted, bipartite matrix. 
 
 ```{r echo=FALSE, results=FALSE}
 
@@ -152,7 +152,7 @@ Knowing this network has 26 vertices, I want to see if the triad census is worki
 ```{r code_folding=TRUE}
 
 #possible triads in network
-26*25*24/6
+25*24*23/6
 
 sum(igraph::triad.census(gd_igraph_from_im))
 
@@ -164,7 +164,7 @@ The igraph created from the incidence matrix is NOT representing the triad censu
 ```{r code_folding=TRUE}
 
 #possible triads in network
-26*25*24/6
+25*24*23/6
 
 sum(igraph::triad.census(gd_igraph_adj))
 
@@ -214,9 +214,9 @@ Getting a look at the components of the network shows that there are 2 component
 
 ```{r code_folding=TRUE}
 
-names(igraph::components(gd_igraph_from_im))
-igraph::components(gd_igraph_from_im)$no 
-igraph::components(gd_igraph_from_im)$csize
+names(igraph::components(gd_igraph_adj))
+igraph::components(gd_igraph_adj)$no 
+igraph::components(gd_igraph_adj)$csize
 
 ```
 
@@ -234,21 +234,18 @@ graph.density(gd_igraph_adj, loops=TRUE)
 ```
 ### Degree Measure
 
-The network degree measure: This gives me a clear output showing the degree of each particular node (songwriter). It is not suprising, knowing my subject matter, that Jerry Garcia is the highest degree node in this network as the practical and figurative head of the band. The other band members' degree measures are not necessarily what I expected, though. I did not anticipate that his songwriting partner, Robert Hunter, would have a lower degree than band members Phil Lesh and Bob Weir. Further, I did not anticipate that the degree measure of band member 'Pigpen' would be so high given his early death in the first years of the band's touring life.
+The network degree measure: This gives me a clear output showing the degree of each particular node (songwriter). I will also begin creating a dataframe for easier review going forward. 
+
+It is not surprising, knowing my subject matter, that Jerry Garcia is the highest degree node in this network as the practical and figurative head of the band. The other band members' degree measures are not necessarily what I expected, though. I did not anticipate that his songwriting partner and key collaborator, Robert Hunter, would have a higher degree than band members Phil Lesh and Bob Weir. Further, I did not anticipate that the degree measure of band member 'Pigpen' would be so high given his early death in the first years of the band's touring life. Specifically, I'm surprised that Pigpen has a higher degree than John Barlow, who was the key collaborator and writing partner of Bob Weir. This tells me that the proportion of songs that Weir wrote outside of the songs written with Barlow were much more dramatic than the proportion of songs Garcia wrote outside the songs written with Hunter.
+
+The original lineup of Jerry Garcia, Bob Weir, Phil Lesh, Bill Kreutzmann, and Pigpen as well as Robert Hunter's presence in the formative years of the band's most collaborative era, means that this degree ranking makes sense intuitively.
 
 ```{r code_folding=TRUE}
+gd_ig_nodes<-data.frame(name=V(gd_igraph_adj)$name, degree=igraph::degree(gd_igraph_adj, loops = FALSE))
+gd_ig_nodes$normalized <-igraph::degree(gd_igraph_adj, loops = FALSE, normalized = TRUE)
 
-igraph::degree(gd_igraph_adj)
-
-```
-
-To look further I will begin creating a dataframe for easier review going forward.
-
-```{r code_folding=TRUE}
-
-grateful_igraph<-data.frame(name=V(gd_igraph_adj)$name, degree=igraph::degree(gd_igraph_adj))
-
-grateful_igraph
+gd_ig_nodes%>%
+  arrange(desc(degree))
 
 ```
 
@@ -258,7 +255,7 @@ A quick look at the summary statistics confirms for me the minimum, maximum, med
 
 ```{r code_folding=TRUE}
 
-summary(grateful_igraph)
+summary(gd_ig_nodes)
 
 ```
 
@@ -267,96 +264,79 @@ summary(grateful_igraph)
 Now I want to take a step back and try to visually represent this data better.
 
 ```{r code_folding=TRUE}
-
-# Community detection algoritm 
-community <- cluster_louvain(gd_igraph_adj) 
-
-# Attach communities to relevant vertices
-V(gd_igraph_adj)$color <- community$membership 
-
-# Graph layout
-layout <- layout.random(gd_igraph_adj) 
-
-# igraph plot 
-plot(gd_igraph_adj, layout = layout)
-
+#ggraph(gd_igraph_adj, layout = "fr") +
+  #geom_edge_link() + 
+  #geom_node_point(aes(color = factor(color))) + 
+  #geom_node_text(aes(label = name), repel = TRUE) +
+  #theme_void() +
+  #theme(legend.position = "none") 
 ```
 
-Better, but not quite.
-
-```{r code_folding=TRUE}
-
-ggraph(gd_igraph_adj, layout = "fr") +
-  geom_edge_link() + 
-  geom_node_point(aes(color = factor(color))) + 
-  geom_node_text(aes(label = name), repel = TRUE) +
-  theme_void() +
-  theme(legend.position = "none") 
-ggsave("igraph2.pdf", device="pdf", width=8, height=8, units="in",dpi=600)
-```
+![](plot1.png)
 
 That is starting to look more meaningful!
 
-```{r echo=TRUE}
+```{r code_folding=TRUE}
 
 # Set size to degree centrality 
-V(gd_igraph_adj)$size = degree=igraph::degree(gd_igraph_adj)
+#V(gd_igraph_adj)$size = degree=igraph::degree(gd_igraph_adj)
 
 #Additional customisation for better legibility 
-ggraph(gd_igraph_adj, layout = "fr") +
-  geom_edge_arc(strength = 0.2, width = 0.5, alpha = 0.15) + 
-  geom_node_point(aes(size = size, color = factor(color))) + 
-  geom_node_text(aes(label = name, size = size), repel = TRUE) +
-  theme_void() +
-  theme(legend.position = "none") 
+#ggraph(gd_igraph_adj, layout = "fr") +
+  #geom_edge_arc(strength = 0.2, width = 0.5, alpha = 0.15) + 
+  #geom_node_point(aes(size = size, color = factor(color))) + 
+  #geom_node_text(aes(label = name, size = size), repel = TRUE) +
+  #theme_void() +
+  #theme(legend.position = "none") 
 ```
+![](plot2.png)
+
 
 ### Centrality Measures
 
-To examine the centrality and power scores of the nodes, I created a data frame with the centrality degree, normalized centrality, Bonacich power, rescaled Bonacich power, Eigenvector centrality scores and the breakdown of reflected and derived centrality scores. I later added the closeness, betweenness, and Burt centrality scores.
+To examine additional centrality and power scores of the nodes, I added to the data frame with the centrality degree and normalized centrality. Now I am adding  Bonacich power, rescaled Bonacich power, Eigenvector centrality scores and the breakdown of reflected and derived centrality scores. Additionally, I am adding the closeness, betweenness, and Burt centrality scores.
 
 To calculate the reflected and derived centrality scores, I first run some operations on the adjacency matrix and keep in mind that these two scores make up the entire calculation of the Eigenvector centrality score. 
 
 ```{r code_folding=TRUE}
-
-gd_adjacency <- as.matrix(as_adjacency_matrix(gd_igraph_adj))
-gd_adjacency_2 <- gd_adjacency %*% gd_adjacency
+#gd_adjacency <- as.matrix(as_adjacency_matrix(gd_igraph_adj))
+#gd_adjacency_2 <- gd_adjacency %*% gd_adjacency
 
 #calculate Bonacich power
-bp_ig1 <- power_centrality(gd_igraph_adj) #with a default index of "1"
-bp_ig2 <- power_centrality(gd_igraph_adj, rescale = TRUE) #rescaled so they sum to "1"
+#bp_ig1 <- power_centrality(gd_igraph_adj) #with a default index of "1"
+#bp_ig2 <- power_centrality(gd_igraph_adj, rescale = TRUE) #rescaled so they sum to "1"
 
 #calculate portion of reflected centrality
-gd_reflective <- diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
-gd_reflective <- ifelse(is.nan(gd_reflective),0,gd_reflective)
+#gd_reflective <- diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
+#gd_reflective <- ifelse(is.nan(gd_reflective),0,gd_reflective)
 
 #calculate derived centrality
-gd_derived <- 1-diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
-gd_derived <- ifelse(is.nan(gd_derived),1,gd_derived)
+#gd_derived <- 1-diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
+#gd_derived <- ifelse(is.nan(gd_derived),1,gd_derived)
 
 #calculate closeness centrality: igraph
-igraph::closeness(gd_igraph_adj)
+#close <- igraph::closeness(gd_igraph_adj)
 
 #calculate betweenness centrality: igraph
-igraph::betweenness(gd_igraph_adj, directed=FALSE)
+#between <- igraph::betweenness(gd_igraph_adj, directed=FALSE)
 
 #calculate Burt's network constraint
-constraint(gd_igraph_adj)
+#constraint <- constraint(gd_igraph_adj)
 
-#I am loading the data frame of all of these values from previous pre-knitr runs
+#add these values to the data frame I started
+#gd_ig_nodes$eigenvector <- eigen
+#gd_ig_nodes$eigen_derived <- gd_derived
+#gd_ig_nodes$eigen_reflective <- gd_reflective
+#gd_ig_nodes$betweenness <- between
+#gd_ig_nodes$closeness <- close
+#gd_ig_nodes$bonacich <- bp_ig1
+#gd_ig_nodes$bonacich_rescaled <- bp_ig2
+#gd_ig_nodes$constraint <- constraint
+#options(scipen = 999)
 
-centrality_gd_igraph <- read.csv("centrality_df.csv")
-
-row.names(centrality_gd_igraph)<-NULL
-centrality_gd_igraph%>%
-  arrange(desc(degree))%>%
-  slice(1:5)
-
+gd_ig_nodes<-read.csv("gd_ig_nodes.csv")
+head(gd_ig_nodes[2:7])
 ```
-
-Right away, I see the highest degree are clearly Jerry Garcia and Robert Hunter, which makes sense given that they were a songwriting pair that were prolific in creating the Grateful Dead original songbook. Bob Weir also contributed quite a bit, though the songs he wrote with his writing partner John Barlow numbered many less than those that he wrote as part of the whole band, judging by Barlow's absence in the top counts.
-
-The original lineup of Jerry Garcia, Bob Weir, Phil Lesh, Bill Kreutzmann, and Pigpen as well as Robert Hunter's presence in the formative years of the band's most collaborative era, means that this degree ranking makes sense intuitively.
 
 #### Eigenvector Centrality
 
@@ -364,13 +344,16 @@ I am also interested in the Eigenvector centrality scores - Both the top as well
 
 ```{r code_folding=TRUE}
 
-centrality_gd_igraph%>%
+gd_ig_nodes%>%
   arrange(desc(eigenvector))%>%
   slice(1:5)
-
 ```
 
-Robert Hunter having the top Eigenvector centrality score is not a shock - he has long held the unofficial title of band member and as the person behind the songwriting magic of the Grateful Dead. His primary songwriting partner was Jerry Garcia, but he also wrote songs with the early, full band and later with almost all of the individual members of the band.
+Bob Weir having top overall Eigenvector centrality makes sense - he is a core founding member and a prolific songwriter. He did not write as many songs as Jerry Garcia or Robert Hunter, but he wrote with a larger variety of people.
+
+The top derived Eigenvector centrality scores are songwriters who contributed to songs but were outside the band member or key collaborator circle, which again makes sense.
+
+Robert Hunter having the top reflective Eigenvector centrality score is not a shock - he has long held the unofficial title of band member and as the person behind the songwriting magic of the Grateful Dead. His primary songwriting partner was Jerry Garcia, but he also wrote songs with the early, full band and later with almost all of the individual members of the band. 
 
 It is a little surprising, though, that the Eigenvector scores fall off so quickly after Robert Hunter and Jerry Garcia.
 
@@ -378,75 +361,63 @@ It is a little surprising, though, that the Eigenvector scores fall off so quick
 
 The closeness centrality of a node is defined as the sum of the geodesic distances between that node and all other nodes in a network. 
 
-```{r, echo=TRUE}
-
-centrality_gd_igraph%>%
+```{r code_folding=TRUE}
+gd_ig_nodes%>%
   arrange(desc(closeness))%>%
   slice(1:5)
-
 ```
 
-This evaluation is more difficult as the range is made up of much less clearly defined scores.
+This evaluation is more difficult as the range is made up of much smaller scaled scores, but seem to be somewhat in line with the Eigenvector centrality scores.
 
-In addition to node-level centrality scores, I also want to calculate the network level centralization index for closeness centrality measures.  Originally, I got a warning that closeness centrality is not well-defined for disconnected graphs. After re-running the commands, I get a network level closeness measure of 0.231.
+In addition to node-level centrality scores, I also want to calculate the network level centralization index for closeness centrality measures. Here, I get a network level closeness measure of 0.552.
 
 ```{r, echo=TRUE}
-
 #calculate closeness centralization index: igraph
 centr_clo(gd_igraph_adj)$centralization
-
 ```
 
 #### Betweenness
 
 Betweenness represents the number of geodesics on which a node sits. 
 
-Now I want to add the closeness and betweenness to my centrality data frame and first, sort by and take a look at the nodes with the highest betweenness:
+Now I want to take the closeness and betweenness to my centrality data frame and first, sort by and take a look at the nodes with the highest betweenness:
 
 ```{r code_folding=TRUE}
-
-row.names(centrality_gd_igraph)<-NULL
-centrality_gd_igraph%>%
+gd_ig_nodes%>%
   arrange(desc(betweenness))%>%
   slice(1:5)
-
 ```
 
 The most immediate observations I have is that the highest degree node (Jerry Garcia) is not the node with the highest scoring betweenness. That goes to Bob Weir, who is still a relatively high degree node, but significantly lower than Jerry Garcia given that his betweenness score is so much higher (~121 compared to Garcia's ~16).
 
-I can make a guess that the two highest degree nodes, Jerry Garcia and Robert Hunter, having relatively low betweenness scores can be linked to the fact that the two wrote mostly together. Although the pair wrote the most songs in the originals catalog, Bob Weir wrote many songs with a variety of other songwrriters; giving him a higher level of betweenness. 
+I can make a guess that the two highest degree nodes, Jerry Garcia and Robert Hunter, having relatively low betweenness scores can be linked to the fact that the two wrote mostly together. Although the pair wrote the most songs in the originals catalog, Bob Weir wrote many songs with a variety of other songwriters, as suspected by the results in the degree scores. This would give him a higher level of betweenness. 
 
 Similarly, Phil Lesh and Pigpen, original band members who wrote relatively fewer songs, contributed to more songs that were written by the entire band, giving them more exposure to connections on the songs that they did write.
 
+#### Bonacich Power
+
+Bonacich power is a bit complicated but I have taken away the concept that it measures how powerful a node is based on the relative strength or weakness of their alters. 
+
+The lower, negative Bonacich power values imply that nodes become more powerful as their alters become weaker; positive Bonacich power values imply that nodes becomemore powerful as their alters become more powerful.
+
+The cooperative songwriting network is likely not going to be a good example of this power compared to examining cooperative v. antagonistic relationships.
+
+```{r code_folding=TRUE}
+gd_ig_nodes%>%
+  arrange(desc(bonacich))%>%
+  slice(1:5)
+```
+
 #### Network Constraint (Burt)
 
-Constraint is a measure of the redundancy of a node’s connections. It is bound between 0 and 1, with 0 being a complete lack, and 1 being complete redundancy.
+Constraint is a measure of the redundancy of a node’s connections. It is bound between 0 and 1, with 0 being a complete lack of restraint, and 1 being complete redundancy.
 
 ```{r code_folding=TRUE}
-
-centrality_gd_igraph %>%
-  arrange(desc(burt))%>%
-  slice(1:5)
-
+gd_ig_nodes %>%
+  select(name,constraint)
 ```
 
-After all the closeness calculations, I saved the data frame for further analysis.
+Similarly to the look at derived Eigenvector centrality, the highest network constraint scores go to songwriters that were relatively isolated in their contributions. However, beyond that, the results are very diverse in how they fall. The least constrained node, Bob Weir, is also the highest Eigenvector value as well as highest in betweenness. But second least constrained - Donna Godchaux - contributed to few songs, but most of them full-band collaborations, does indicate to me more of what this measure represents.
 
-```{r code_folding=TRUE}
-#centrality_gd_igraph <-data.frame(id=1:vcount(gd_igraph_adj),
-                        #name=V(gd_igraph_adj)$name,
-                        #degree=igraph::degree(gd_igraph_adj),
-                        #normalized_degree=igraph::degree(gd_igraph_adj,normalized=T),
-                        #bonacich=power_centrality(gd_igraph_adj),
-                        #bonacich_scaled=power_centrality(gd_igraph_adj),
-                        #eigenvector=centr_eigen(gd_igraph_adj,directed = F)$vector,
-                        #reflect_eigen=gd_reflective*centr_eigen(gd_igraph_adj,directed = F)$vector,
-                        #derive_eigen=gd_derived*centr_eigen(gd_igraph_adj,directed = F)$vector,
-                        #closeness=closeness(gd_igraph_adj),
-                        #betweenness=betweenness(gd_igraph_adj, directed=FALSE),
-                        #burt=constraint(gd_igraph_adj))
 
-#write.csv(centrality_gd_igraph, file = "centrality_df.csv")
-
-```
 
