@@ -9,15 +9,21 @@
     <generator>Distill</generator>
     <lastBuildDate>Mon, 25 Apr 2022 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Further igraph Analysis</title>
+      <title>Network Differences and Advanced Analysis</title>
       <dc:creator>Kristina Becvar</dc:creator>
       <link>http://gratefulnetwork.live/posts/igraph-analysis</link>
-      <description>Moving forward using the igraph package</description>
-      <category>network creation</category>
+      <description>Comparing Network Packages and Moving Forward with Clustering, Blockmodels, Roles, and Community Structures</description>
       <category>network analytics</category>
       <category>network visualization</category>
+      <category>blockmodels</category>
+      <category>roles</category>
+      <category>community</category>
+      <category>clustering</category>
+      <category>igraph</category>
+      <category>statnet</category>
       <guid>http://gratefulnetwork.live/posts/igraph-analysis</guid>
       <pubDate>Mon, 25 Apr 2022 00:00:00 +0000</pubDate>
+      <media:content url="http://gratefulnetwork.live/posts/igraph-analysis/ward_d.png" medium="image" type="image/png" width="700" height="432"/>
     </item>
     <item>
       <title>Grateful Network Creation: Statnet</title>

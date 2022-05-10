@@ -1,12 +1,17 @@
 ---
-title: "Further igraph Analysis"
+title: "Network Differences and Advanced Analysis"
 description: |
-  Moving forward using the igraph package
-preview: 
+  Comparing Network Packages and Moving Forward with Clustering, Blockmodels, Roles, and Community Structures
+preview: ward_d.png
 categories:
-  - network creation
   - network analytics
   - network visualization
+  - blockmodels
+  - roles
+  - community
+  - clustering
+  - igraph
+  - statnet
 author:
   - name: Kristina Becvar
     url: http://gratefulnetwork.live/
@@ -16,6 +21,8 @@ date: 2022-04-25
 output:
   distill::distill_article:
     toc: true
+    code_folding: true
+    
 ---
 
 ```{r setup, include=FALSE}
@@ -27,6 +34,7 @@ knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2) 
 library(readr) 
 library(igraph)
+library(statnet)
 library(ggraph)
 library(tidyverse)
 library(ergm)
@@ -38,9 +46,9 @@ suppressWarnings(expr)
 
 ```
 
-# Loading Network
+# Loading Networks
 
-I previously analyzed the network using igraph and statnet, and have found that igraph primarily serves the network best.
+I previously analyzed the network using igraph and statnet, and need to make a decision about which package serves the network best. 
 
 ## Affiliation Matrix
 
@@ -58,90 +66,244 @@ gd_projection <- gd_matrix%*%t(gd_matrix)
 write.csv(gd_projection, file = "gd_projection.csv")
 ```
 
-## From Adjacency Matrix
+## Create igraph Object
 
 ```{r code_folding=TRUE}
 set.seed(11)
-gd_igraph <- graph.adjacency(gd_projection,mode="undirected", weighted = NULL, )
+gd_igraph <- graph.adjacency(gd_projection,mode="undirected", weighted = NULL)
 ```
 
-### Basic Visualization
+## Create statnet Object
 
 ```{r echo=FALSE}
 set.seed(11)
-net <- simplify(gd_igraph)
-plot(gd_igraph, edge.size=.4, 
-     edge.curved=.1,
-     vertex.color="purple",
-     vertex.frame.color="#555555",
-     vertex.label.color="black", 
-     vertex.label.cex=.7,
-     vertex.label.dist=1,
-     vertex.size=7,
-     layout=layout_on_sphere)
+gd_statnet <- as.network(gd_projection,
+               directed = FALSE, 
+               bipartite = FALSE,
+               loops = FALSE,
+               connected = TRUE)
 ```
 
 # Loading Data
 
-## Centrality Data
+## Centrality and Node Data
 
-I am going to load the data frame I saved from my first igraph inspection here.
+I am going to load the data frame I saved from both igraph and statnet package analysis as well as a dataframe with key comparable results from each package
 
 ```{r code_folding=TRUE}
-gd_centrality <- read.csv("centrality_df.csv")
-head(gd_centrality)
+gd_ig_nodes <- read.csv("gd_ig_nodes.csv")
+gd_stat_nodes <- read.csv("gd_stat_nodes.csv")
+gd_compare <- read.csv("gd_comparison_packages.csv")
 ```
 
 ## Correlations of Centrality Measures
 
-```{r code_folding=TRUE}
+### Degree
 
-correlations <- gd_centrality %>% 
-  select(degree,eigenvector,bonacich, closeness, betweenness, constraint)%>%
-  correlate() %>%
-  rearrange()
-fashion(correlations)
-```
 ```{r code_folding=TRUE}
-#visualize correlations
-rplot(correlations)
+degree_lm <- lm(igraph_degree~statnet_degree, data = gd_compare)
+summary(degree_lm)
 ```
 
-## Blockmodeling
+### Eigenvector Centrality
+
+```{r code_folding=TRUE}
+eigen_lm <- lm(ig_eigen~stat_eigen, data = gd_compare)
+summary(eigen_lm)
+```
+
+### Betweenness
+
+```{r code_folding=TRUE}
+between_lm <- lm(ig_between~stat_between, data = gd_compare)
+summary(between_lm)
+```
+
+### Closeness
+
+```{r code_folding=TRUE}
+close_lm <- lm(ig_close~stat_close, data = gd_compare)
+summary(close_lm)
+```
+
+### Bonacich Power
+
+```{r code_folding=TRUE}
+bonpow_lm <- lm(ig_bonpow~stat_bonpow, data = gd_compare)
+summary(bonpow_lm)
+```
+
+### Evaluation
+
+There is high, nearly perfect in some cases, correlation in the scores given by the igraph and statnet packages in most measures. The largest differences are in the Bonacich power scores. The other difference, and most significant for my purposes, is the degree centrality scores. Although they are statistically correlated to a high degree, I have no independent way to verify which evaluation is "correct", so I will go forward using both networks depending on the needs of the task and capabilities of the packages.
+
+## Structural Equivalence
+
+Creating the matrix element then taking a look at the summary using the equivalence function "sedist", the default measure of assessing the approximate structural equivalence of actors, or "complete".
+
+### "Complete"
+
+```{r, code_folding=TRUE}
+#calculate equivalence from specified distance marix
+gd_stat_se<-equiv.clust(gd_statnet, equiv.fun="sedist", method="hamming",mode="graph")
+```
+
+```{r, code_folding=TRUE}
+#summary of object produced by sedist()
+#summary(gd_stat_se)
+#plot equivalence clustering
+plot(gd_stat_se,labels=gd_stat_se$glabels)
+```
+
+I need to look at the other methods of clustering as well. 
+
+### "Average"
+
+```{r code_folding=TRUE}
+#with average cluster.method
+gd_avg_se<-equiv.clust(gd_statnet, equiv.fun="sedist", cluster.method="average", method="hamming",mode="graph")
+#plot:
+plot(gd_avg_se,labels=gd_stat_se$glabels)
+```
+
+### "Single"
+
+```{r code_folding=TRUE}
+
+#with average cluster.method
+gd_sing_se<-equiv.clust(gd_statnet, equiv.fun="sedist", cluster.method="single", method="hamming",mode="graph")
+
+#plot:
+plot(gd_sing_se,labels=gd_stat_se$glabels)
+
+```
+
+### "Ward.D"
+
+```{r code_folding=TRUE}
+
+#with average cluster.method
+gd_wrd_se<-equiv.clust(gd_statnet, equiv.fun="sedist", cluster.method="ward.D", method="hamming",mode="graph")
+
+#plot:
+plot(gd_wrd_se,labels=gd_stat_se$glabels)
+
+```
+
+## Partition Using Clustering
+
+I understand that the number of partitions (or roles) will depend on the height at which the dendrogram is cut. Using the tutorial example, I set the height at 15 and the result is 9 clusters. Using the alternate view from the tutorial, I also set the height at 10, and identify 10 distinct clusters.
+
+### ward.D, Height= 15
+
+```{r code_folding=TRUE}
+
+#plot equivalence clustering
+plot(gd_wrd_se,labels=gd_wrd_se$glabels)
+#partition the clusters
+rect.hclust(gd_wrd_se$cluster,h=15)
+```
+
+### ward.D, Height= 10
+
+```{r code_folding=TRUE}
+
+#plot equivalence clustering
+plot(gd_wrd_se,labels=gd_wrd_se$glabels)
+#partition the clusters
+rect.hclust(gd_wrd_se$cluster,h=10)
+```
+
+### Height= 20
+
+For my own experimenting, looking at it with a higher height ("20"), it spreads the clusters to 5.
+
+```{r code_folding=TRUE}
+#plot equivalence clustering
+plot(gd_wrd_se,labels=gd_wrd_se$glabels)
+#partition the clusters
+rect.hclust(gd_wrd_se$cluster,h=20)
+```
+
+## Blockmodel Partitions
+
+Inspecting the goodness of fit of the partitions that result from the clustering steps above using blockmodeling to try and get a better sense of how well the partitioning worked. Using the blockmodel command in statnet and specifying "k=x" means that "x" will indicate how many partitions to create, and "h=x" means that "x" will indicate the height to cut the dendogram.
+
+### 2-partition blockmodel
+
+```{r code_folding=TRUE}
+#blockmodel and select partitions
+blk_mod<-blockmodel(gd_statnet,gd_wrd_se,k=2)
+#print blockmodel object
+blk_mod
+```
+
+```{r code_folding=TRUE}
+plot.block<-function(x=blk_mod, main=NULL, cex.lab=1){
+  plot.sociomatrix(x$blocked.data, labels=list(x$plabels,x$plabels),
+                   main=main, drawlines = FALSE, cex.lab=cex.lab)
+  for (j in 2:length(x$plabels)) if (x$block.membership[j] !=
+                                     x$block.membership[j-1]) 
+    abline(v = j - 0.5, h = j - 0.5, lty = 3, xpd=FALSE)
+}
+plot.block(blk_mod,main="Grateful Dead Songwriting: 2 Partitions", cex.lab=.4)
+```
+
+### 5-partition blockmodel
+
+```{r code_folding=TRUE}
+#blockmodel and select partitions
+blk_mod2<-blockmodel(gd_statnet, gd_wrd_se,k=5)
+#print blockmodel object
+blk_mod2$block.model
+#plot blockmodel partitions
+plot.block(blk_mod2,main="Grateful Dead Songwriting, 5 Partitions", cex.lab=.5)
+```
+
+## Blockmodeling Choice
 
 In my semester assignment posts, I looked more deeply into the role and blockmodeling of the network. In the end I was able to find a model that represents the network most intuitively - the optimized 5-partition blockmodel.
 
 ```{r echo=FALSE, eval=FALSE}
 #select partitions with optimization
-blks<-blockmodeling::optRandomParC(gd_projection, k=5, rep=10, approaches="ss", blocks="com")
+blks3<-blockmodeling::optRandomParC(gd_projection, k=5, rep=10, approaches="ss", blocks="com")
 #blockmodel with optimized partition
-blk_mod <- blockmodel(gd_projection, blks$best$best1$clu, plabels=rownames(gd_projection)) 
+blk_mod3<-blockmodel(gd_projection, blks3$best$best1$clu, plabels=rownames(gd_projection)) 
 #print blockmodel object
-blk_mod$block.model
+blk_mod3$block.model
+plot.block(blk_mod3,main="Grateful Dead Songwriting, 5 Optimized Partitions", cex.lab=.5)
+#I can assign "block.membership" as a vertex attribute to my 5-partition blockmodel for igraph
+V(gd_igraph)$role<-blk_mod3$block.membership[match(V(gd_igraph)$name,blk_mod3$plabels)]
+#and statnet
+gd_statnet%v%"role"<-blk_mod3$block.membership[match(gd_statnet%v%"vertex.names", blk_mod3$plabels)]
+#add to node dataframes
+#attach role to centrality dataframe to create nodes dataframe
+gd_stat_nodes$block <- blk_mod3$block.membership
+gd_ig_nodes$block <- blk_mod3$block.membership
 ```
-
-![](blockmodel.png)
 
 ### Blockmodel Visualization
 
 I can assign "block.membership" as a vertex attribute to my 5-partition blockmodel, then use the role attribute to change the color of plotted nodes in a network plot.
 
+#### igraph
+
 ```{r code_folding=TRUE}
-
-#V(gd_igraph)$role<-blk_mod$block.membership[match(V(gd_igraph)$name,blk_mod$plabels)]
-
 #plot(gd_igraph, layout=layout_with_kk, vertex.color=V(gd_igraph)$role)
 ```
-![](bm_plot.png)
-## Centrality by Network Role
+![](ig_block.png)
 
-I am changing the centrality table created earlier and adding the role assignments from the "blockmodel" calculations to summarize average node measures of centrality by role. This table is really becoming more of a 'node feature' data frame.
+#### statnet
 
 ```{r code_folding=TRUE}
-#attach role to centrality dataframe to create nodes dataframe
-gd_nodes <- read.csv("gd_nodes.csv")
-head(gd_nodes[10:16])
+#library(GGally)
+#GGally::ggnet2(gd_statnet,
+               #node.color="role", 
+               #node.size=degree(gd_statnet, gmode="graph"),
+               #node.label = "vertex.names",
+               #node.alpha = .5)
 ```
+![](stat_block.png)
 
 ## Community
 
@@ -156,7 +318,7 @@ On inspection of the community structures created by each algorithm, I felt that
 
 ### Eigenvector Community Detection
 
-This method has created 5 communities to examine.
+This method has created 5 communities to examine with a modularity score of 0.452.
 
 ```{r code_folding=TRUE}
 #Run clustering algorithm: leading eigenvector
@@ -174,30 +336,42 @@ plot(eigen_gd,gd_igraph)
 
 ### Louvain Community Clustering
 
-One method I did not explore in the semester assignment was the Louvain clustering method. This method gives 7 communities that are somewhat unexpected, but give an interesting and valid perspective on the membership. The modularity of this method is 0.457, just above the modularity score of the eigenvector community modularity and very competitive as an option.
+One method I did not explore in the semester assignment was the Louvain clustering method. This method gives 7 communities that are somewhat unexpected, but give an interesting and valid perspective on the membership. The modularity of this method is 0.455, just above the modularity score of the eigenvector community modularity and very competitive as an option.
 
 ```{r code_folding=TRUE}
 louvain <- cluster_louvain(gd_igraph)
 louvain$modularity
 plot(louvain,gd_igraph)
 V(gd_igraph)$community <- louvain$membership
+```
 
+
+```{r code_folding=TRUE}
 colrs <- adjustcolor( c("gray50", "tomato", "gold", "yellowgreen", "cornflowerblue", "orange"), alpha=.6)
 
 plot(gd_igraph, vertex.color=colrs[V(gd_igraph)$community])
 ```
 
+
+
+
+
+
+
+
+
 # Further Analysis
 
 ## K-core Decomposition
 
-Finding the k-core where every node has degree of at least "k".
+Finding the k-core where every node has degree of at least "k". I will add this so my node data frames before finishing up so I have that basic measure for furter analysis.
 
 ```{r}
 kc <- coreness(gd_igraph, mode="all")
 kc
 #adding to the gd_nodes
-gd_nodes$kcore<-kc
+gd_ig_nodes$kcore<-kc
+gd_stat_nodes$kcore<-kc
 ```
 
 

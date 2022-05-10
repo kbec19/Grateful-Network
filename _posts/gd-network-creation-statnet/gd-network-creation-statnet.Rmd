@@ -90,8 +90,6 @@ gd_statnet <- as.network(gd_projection,
                loops = FALSE,
                connected = FALSE)
 
-network.stat<-network(gd_projection, directed=F, matrix.type="adjacency") 
-
 ```
 
 ## Network Features
