@@ -307,31 +307,160 @@ I can assign "block.membership" as a vertex attribute to my 5-partition blockmod
 
 ## Community
 
-During the semester assignments, I investigated multiple community structures and the corresponding community scores. I'll load the matrix of community modularity scores first.
+### Fast and Greedy Community
 
-```{r code_folding = TRUE}
-gd_mod <- read.csv("gd_mods.csv")
-gd_mod
+The method attempts to detect dense sub-graphs by optimizing modularity scores on igraph networks that are un-directed. I'll start with inspecting the names that are part of the new object.
+
+#### Simplify Function
+
+The fast and greedy function was giving me an error code of:
+
+*Error in cluster_fast_greedy(gd_network_ig):At fast_community.c:660:* *fast-greedy community finding works only on graphs without multiple* *edges, Invalid value*
+
+Some community sourcing of opinions led me to run the "simplify()" function to correct this. And it did, during my semester assignment. But now, simplify() is simply not working. I'm not going too deep into this now, because frankly this community was the least intuitive when I ran it previously.
+
+```{r code_folding=TRUE}
+#create simplified igraph network
+simple_gd <- simplify(gd_igraph)
+#run fast_greedy clustering algorithm
+#fg_gd <- cluster_fast_greedy(simple_gd)
+is.simple(simple_gd)
 ```
 
-On inspection of the community structures created by each algorithm, I felt that the eigenvector community best represented the network. The modularity scores of the communities confirm that this is a reasonable observation. The higher modularity scores represent divisions with dense edge connections between the vertices within a community but sparse connections between vertices in different communities ()
+### Walktrap Community Detection and Plot
+
+The walktrap community detection created one community containing all of the songwriters in the giant component. I will not plot this community.
+
+```{r code_folding=TRUE}
+#Run clustering algorithm: walktrap
+wt_gd <- walktrap.community(gd_igraph)
+#Inspect community membership
+igraph::groups(wt_gd)
+```
+
+### Collect & Compare Modularity Scores 
+
+Saving the scores for evaluation and later analysis; I will continue to add the other community modularity scores into this vector as I run them.
+
+```{r echo=TRUE}
+mods<-c(walktrap=modularity(wt_gd))
+mods
+```
+
+### Leading Label Propagation Community Detection
+
+In this evaluation, each of the nodes was indicated to be in its' own community. I will not plot this community.
+
+```{r code_folding=TRUE}
+#Run clustering algorithm: leading label
+lab_gd<-label.propagation.community(gd_igraph)
+#Inspect community membership
+igraph::groups(lab_gd)
+#collect modularity scores to compare
+mods<-c(mods, label=modularity(lab_gd))
+```
+
+### Edge Betweenness Community Detection
+
+Again, each of the nodes was indicated to be in its' own community. I will not plot this community.
+
+```{r code_folding=TRUE}
+#Run clustering algorithm: edge betweenness
+edge_gd <- label.propagation.community(gd_igraph)
+#Inspect community membership
+igraph::groups(edge_gd)
+#collect modularity scores to compare
+mods<-c(mods, edge=modularity(edge_gd))
+```
 
 ### Eigenvector Community Detection
 
-This method has created 5 communities to examine with a modularity score of 0.452.
+This method has created four communities to examine.
 
 ```{r code_folding=TRUE}
 #Run clustering algorithm: leading eigenvector
 eigen_gd <- leading.eigenvector.community(gd_igraph)
 #Inspect community membership
 igraph::groups(eigen_gd)
+#collect modularity scores to compare
+mods<-c(mods, eigen=modularity(eigen_gd))
 ```
 
-Igraph colors the nodes by community
+igraph colors the nodes by community
 
 ```{r code_folding=TRUE}
 #plot network with community coloring
 plot(eigen_gd,gd_igraph)
+```
+
+
+## Spinglass Community Detection
+
+This method has also created 4 communities to examine.
+
+```{r code_folding=TRUE}
+#Run clustering algorithm: spinglass
+spin_gd <- spinglass.community(gd_igraph)
+#Inspect community membership
+igraph::groups(spin_gd)
+#collect modularity scores to compare
+mods<-c(mods, spin=modularity(spin_gd))
+```
+
+Again, igraph colors the nodes by community
+
+```{r code_folding=TRUE}
+#plot network with community coloring
+plot(spin_gd,gd_igraph)
+```
+
+## Compare Community Partitions - Eigenvector and Spinglass
+
+It would be worth comparing these scores on a weighted network in the future since it would take that into consideration. For now, I'm going to compare only the Eigenvector and Spinglass since those are the two community models that produced actual divisions.
+
+```{r code_folding=TRUE}
+#compare community partition modularity scores
+modularity(eigen_gd)
+```
+
+```{r code_folding=TRUE}
+#compare community partition modularity scores
+modularity(spin_gd)
+```
+
+#### Variation Method
+
+```{r code_folding=TRUE}
+#compare community partitions using variation of information
+compare(eigen_gd,spin_gd,method="vi")
+```
+
+#### Normalized Mutual Information Method
+
+```{r code_folding=TRUE}
+#compare community partitions
+compare(eigen_gd,spin_gd,method="nmi")
+```
+
+#### Split Join Distance Method
+
+```{r code_folding=TRUE}
+#compare community partitions
+compare(eigen_gd,spin_gd,method="split.join")
+```
+
+#### Rand Index Method
+
+```{r code_folding=TRUE}
+#compare community partitions
+compare(eigen_gd,spin_gd,method="rand")
+```
+
+#### Adjusted Rand Index Method
+
+```{r code_folding=TRUE}
+#compare community partitions
+compare(eigen_gd,spin_gd,method="adjusted.rand")
 ```
 
 ### Louvain Community Clustering
@@ -340,11 +469,23 @@ One method I did not explore in the semester assignment was the Louvain clusteri
 
 ```{r code_folding=TRUE}
 louvain <- cluster_louvain(gd_igraph)
-louvain$modularity
+#collect modularity scores to compare
+mods<-c(mods, louvain=modularity(louvain))
+#Inspect community membership
+igraph::groups(spin_gd)
+```
+
+visualizing the louvain community
+
+```{r code_folding=TRUE}
 plot(louvain,gd_igraph)
 V(gd_igraph)$community <- louvain$membership
 ```
+### Conclusion
 
+On inspection of the community structures created by each algorithm, I felt that the louvain community best represented the network. The modularity scores of the communities confirm that this is a reasonable observation. The higher modularity scores represent divisions with dense edge connections between the vertices within a community but sparse connections between vertices in different communities.
+
+A better visualization of this network with community membership
 
 ```{r code_folding=TRUE}
 colrs <- adjustcolor( c("gray50", "tomato", "gold", "yellowgreen", "cornflowerblue", "orange"), alpha=.6)
@@ -352,21 +493,35 @@ colrs <- adjustcolor( c("gray50", "tomato", "gold", "yellowgreen", "cornflowerbl
 plot(gd_igraph, vertex.color=colrs[V(gd_igraph)$community])
 ```
 
+### Evaluation of Modularity
 
+I am going to create a data frame to save with the modularity scores
 
-
-
-
-
-
+```{r code_folding=TRUE}
+gd_modularity <- c(mods)
+gd_modularity <- as.data.frame(gd_modularity)
+write.csv(gd_modularity, file = "gd_modularity.csv")
+```
 
 # Further Analysis
+
+## Community Membership
+
+Now that I have a community membership model that makes sense, I'll save it in the node data frames.
+
+```{r code_folding=TRUE}
+membership <- louvain$membership
+membership
+#adding to the gd_nodes
+gd_ig_nodes$louvain<-membership
+gd_stat_nodes$louvain<-membership
+```
 
 ## K-core Decomposition
 
 Finding the k-core where every node has degree of at least "k". I will add this so my node data frames before finishing up so I have that basic measure for furter analysis.
 
-```{r}
+```{r code_folding=TRUE}
 kc <- coreness(gd_igraph, mode="all")
 kc
 #adding to the gd_nodes
