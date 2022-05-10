@@ -27,8 +27,10 @@
       <category>network creation</category>
       <category>network analytics</category>
       <category>network visualization</category>
+      <category>statnet</category>
       <guid>http://gratefulnetwork.live/posts/gd-network-creation-statnet</guid>
       <pubDate>Thu, 21 Apr 2022 00:00:00 +0000</pubDate>
+      <media:content url="http://gratefulnetwork.live/posts/gd-network-creation-statnet/network.png" medium="image" type="image/png" width="10102" height="8426"/>
     </item>
     <item>
       <title>Grateful Network Creation: igraph</title>
@@ -38,6 +40,7 @@
       <category>network creation</category>
       <category>network analytics</category>
       <category>network visualization</category>
+      <category>igraph</category>
       <guid>http://gratefulnetwork.live/posts/gd-network-creation</guid>
       <pubDate>Wed, 20 Apr 2022 00:00:00 +0000</pubDate>
       <media:content url="http://gratefulnetwork.live/posts/gd-network-creation/graph1.png" medium="image" type="image/png" width="700" height="432"/>

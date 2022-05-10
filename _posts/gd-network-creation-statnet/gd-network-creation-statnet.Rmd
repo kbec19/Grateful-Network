@@ -2,11 +2,12 @@
 title: "Grateful Network Creation: Statnet"
 description: |
   Building a Grateful Dead Original Song Co-Writing Network in R using the Statnet Package
-preview: 
+preview: network.png
 categories:
   - network creation
   - network analytics
   - network visualization
+  - statnet
 author:
   - name: Kristina Becvar
     url: http://gratefulnetwork.live/
@@ -97,7 +98,7 @@ network.stat<-network(gd_projection, directed=F, matrix.type="adjacency")
 
 Looking at the features of the statnet network with the appropriate commands
 
-```{r echo=TRUE}
+```{r code_folding=TRUE}
 
 print(gd_statnet)
 
@@ -105,6 +106,13 @@ network::list.vertex.attributes(gd_statnet)
 network::list.edge.attributes(gd_statnet)
 
 gd_statnet
+```
+
+### Visualization
+
+And a first look at the basic network structure
+
+```{r code_folding=TRUE}
 
 plot(gd_statnet)
 ```
@@ -113,12 +121,10 @@ plot(gd_statnet)
 
 Looking at the dyad/triad census info, I have a total of 2600 triads, which is in line with the results I got in igraph as well.
 
-```{r echo=TRUE}
-
+```{r code_folding=TRUE}
 sna::dyad.census(gd_statnet)
 sna::triad.census(gd_statnet)
 sum(triad.census(gd_statnet))
-
 ```
 
 ## Transitivity
@@ -131,7 +137,7 @@ gtrans(gd_statnet)
 
 ## Geodesic Distance
 
-Looking at the geodesic distance tells me that on average, I can confirm that the path length in statnet is 1.78, which is different than result from igraph of just over 2.
+Looking at the geodesic distance tells me that on average, I can confirm that the path length in statnet is 1.93, which is not significantly different than result from igraph of 2.01.
 
 ```{r code_folding=TRUE}
 gd_gd <- geodist(gd_statnet,na.omit = TRUE, ignore.eval = TRUE, inf.replace = 0)
@@ -141,12 +147,10 @@ mean(gd_gd$gdist)
 
 ## Components
 
-I can determine that there are 2 components in the statnet network object, they are - as in igraph - 25 songwriters in the large component and one isolate.
+I can determine that there is one component in the statnet network object, as in igraph - 25 songwriters in the giant component and no isolates.
 
-```{r echo=TRUE}
-
+```{r code_folding=TRUE}
 components(gd_statnet)
-component.largest(gd_statnet)
 ```
 
 ## Density
@@ -176,11 +180,42 @@ gd_stat_nodes$rescaled <- rescaled_degree
 arrange(gd_stat_nodes, desc(totdegree))%>%slice(1:5)
 ```
 
-The statnet total degree scores are again, very different from igraph. In igraph, Jerry Garcia is the highest degree node, which makes sense given his position as the practical and figurative head of the band and the fact that he contributed to more songs than any other songwriter.  
+The statnet total degree scores are again, very different from igraph. In igraph, Jerry Garcia is the highest degree node, which gels with my hypothesis given his position as the practical and figurative head of the band and the fact that he contributed to more songs than any other songwriter.  
 
-Although in igraph's evaluation I was suprised that Jerry Garcia's songwriting partner Robert Hunter was ranked lower than Phil Lesh and Bob Weir, it seems that is also the case in the statnet evaluation.
+However, more surprising than Jerry Garcia's position in fourth in highest total degree centrality is his songwriting partner Robert Hunter's position above him in third highest. 
 
-I can understand how Bob Weir and Phil Lesh have high centrality despite lower song counts given their status as co-founding members of the band, it does not make sense to me knowing the context that they are ranked higher than Jerry Garcia.
+I can understand how Bob Weir has a high centrality despite lower song counts given his high Eigenvector centrality and betweenness status in previous igraph evaluations. However, I am surprised by his position as highest total degree and even more surprised that Phil Lesh is second highest total degree centrality overall. Both are co-founding members of the band, and did contribute to many songs written by the band, but not more than Jerry Garcia. It does not make sense to me, knowing the context and subject matter, that they are ranked higher than Jerry Garcia.
+
+## Eigenvector Centrality
+
+```{r code_folding=TRUE}
+#calculate eigenvector centrality
+eigen <- sna::evcent(gd_statnet, gmode="graph")
+#add to nodes data frame
+gd_stat_nodes$eigenvector <- eigen
+
+gd_adjacency <- as.matrix(gd_statnet)
+gd_adjacency_2 <- gd_adjacency %*% gd_adjacency
+
+#calculate portion of reflected centrality
+gd_reflective <- diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
+gd_reflective <- ifelse(is.nan(gd_reflective),0,gd_reflective)
+
+#calculate derived centrality
+gd_derived <- 1-diag(as.matrix(gd_adjacency_2))/rowSums(as.matrix(gd_adjacency_2))
+gd_derived <- ifelse(is.nan(gd_derived),1,gd_derived)
+
+#add to nodes data frame
+gd_stat_nodes$eigen_derived <- gd_derived
+gd_stat_nodes$eigen_reflective <- gd_reflective
+
+#sort the top total degree of nodes in the stat network
+arrange(gd_stat_nodes, desc(eigenvector))%>%slice(1:5)
+```
+
+The most immediate observations I have, is that the highest degree node in the igraph network, Jerry Garcia, was not the highest Eigenvector centrality - but in this network Bob Weir is highest both in degree and in Eigenvector centrality. The only change in the top five is that Jerry Garcia moved ahead of Robert Hunter, which makes sense.
+
+The derived and reflective scores do not make sense - I'm not sure that the formula I used on the igraph network translates to statnet.
 
 ## Closeness
 
@@ -193,9 +228,11 @@ gd_stat_nodes$closeness <- close
 arrange(gd_stat_nodes, desc(closeness))%>%slice(1:5)
 ```
 
+The closeness scores are similar to overall degree centrality, at least in the top scores, and these are also in line with the igraph results.
+
 ## Betweenness
 
-```{r}
+```{r code_folding=TRUE}
 #calculate betweenness
 between <- sna::betweenness(gd_statnet, gmode="graph")
 #add to nodes data frame
@@ -205,32 +242,25 @@ arrange(gd_stat_nodes, desc(betweenness))%>%slice(1:5)
 
 ```
 
-## Eigenvector Centrality
+Again, when comparing these results to the igraph results, the highest degree node (Jerry Garcia) was not the node with the highest scoring betweenness. In the statnet network, the highest degree node, Bob Weir, is also the highest betweenness score, and by a significantly similar ratio to Garcia as in the igraph network evaluation.
 
-```{r}
-#calculate eigenvector centrality
-eigen <- sna::evcent(gd_statnet, gmode="graph")
-#add to nodes data frame
-gd_stat_nodes$eigenvector <- eigen
-#sort the top total degree of nodes in the stat network
-arrange(gd_stat_nodes, desc(eigenvector))%>%slice(1:5)
-```
+Similarly to igraph, Pigpen jumps up in the rankings for betweenness, likely because his contributions were primarily full-band compositions.
 
 ## Bonacich Power
 
-```{r}
+```{r code_folding=TRUE}
 #calculate bonacich power
 bonpow <- sna::bonpow(gd_statnet, gmode="graph")
 #add to nodes data frame
 gd_stat_nodes$bonacich <- bonpow
 #sort the top total degree of nodes in the stat network
 arrange(gd_stat_nodes, desc(bonacich))%>%slice(1:5)
+write.csv(gd_stat_nodes, file = "gd_stat_nodes.csv")
 ```
 
 ### Add as Attributes
 
 ```{r code_folding=TRUE}
-
 gd_statnet %v% "degree"<- degree(gd_statnet)       # Degree centrality
 gd_statnet %v% "eigenvector"<- evcent(gd_statnet)       # Eigenvector centrality
 gd_statnet %v% "closeness"<- closeness(gd_statnet)    # Closeness centrality
@@ -242,7 +272,7 @@ gd_statnet %v% "bonacich"<- bonpow(gd_statnet) # Bonacich power
 
 ```{r code_folding=TRUE}
 correlations <- gd_stat_nodes %>% 
-  select(totdegree,eigenvector,betweenness,bonacich)%>%
+  select(totdegree,eigenvector,betweenness,closeness,bonacich)%>%
   correlate() %>%
   rearrange()
 fashion(correlations)

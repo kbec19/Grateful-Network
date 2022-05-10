@@ -7,6 +7,7 @@ categories:
   - network creation
   - network analytics
   - network visualization
+  - igraph
 author:
   - name: Kristina Becvar
     url: http://gratefulnetwork.live/
@@ -147,7 +148,7 @@ plot(gd_igraph_adj)
 
 ### Triad Check
 
-Knowing this network has 26 vertices, I want to see if the triad census is working correctly by comparing the following data:
+Knowing this network has 25 vertices, I want to see if the triad census is working correctly by comparing the following data:
 
 ```{r code_folding=TRUE}
 
@@ -224,7 +225,7 @@ This is a great start - now I can get to looking at the network density, central
 
 ### Density
 
-The network density measure: First with just the call "graph.density" and then with adding "loops=TRUE". Since I'm using igraph, I know that its' default output assumes that loops are not included but does not remove them, which can be corrected with the addition of "loops=TRUE" per the course tutorials when comparing output to statnet. This gives me confidence that my network density is closer to 2.1.
+The network density measure: First with just the call "graph.density" and then with adding "loops=TRUE". Since I'm using igraph, I know that its' default output assumes that loops are not included but does not remove them, which can be corrected with the addition of "loops=TRUE" per the course tutorials when comparing output to statnet. This gives me confidence that my network density is closer to 2.26.
 
 ```{r code_folding=TRUE}
 
@@ -354,8 +355,6 @@ Bob Weir having top overall Eigenvector centrality makes sense - he is a core fo
 The top derived Eigenvector centrality scores are songwriters who contributed to songs but were outside the band member or key collaborator circle, which again makes sense.
 
 Robert Hunter having the top reflective Eigenvector centrality score is not a shock - he has long held the unofficial title of band member and as the person behind the songwriting magic of the Grateful Dead. His primary songwriting partner was Jerry Garcia, but he also wrote songs with the early, full band and later with almost all of the individual members of the band. 
-
-It is a little surprising, though, that the Eigenvector scores fall off so quickly after Robert Hunter and Jerry Garcia.
 
 #### Closeness
 

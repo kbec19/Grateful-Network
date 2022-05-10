@@ -112,7 +112,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","preview","categories","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Grateful Network Creation: Statnet"]},{"type":"character","attributes":{},"value":["Building a Grateful Dead Original Song Co-Writing Network in R using the Statnet Package\n"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["network creation","network analytics","network visualization"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Kristina Becvar"]},{"type":"character","attributes":{},"value":["http://gratefulnetwork.live/"]},{"type":"character","attributes":{},"value":["UMass DACSS Program (My Academic Blog Link)"]},{"type":"character","attributes":{},"value":["https://kristinabecvar.com"]}]}]},{"type":"character","attributes":{},"value":["2022-04-21"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","code_folding"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","preview","categories","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Grateful Network Creation: Statnet"]},{"type":"character","attributes":{},"value":["Building a Grateful Dead Original Song Co-Writing Network in R using the Statnet Package\n"]},{"type":"character","attributes":{},"value":["network.png"]},{"type":"character","attributes":{},"value":["network creation","network analytics","network visualization","statnet"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url","affiliation","affiliation_url"]}},"value":[{"type":"character","attributes":{},"value":["Kristina Becvar"]},{"type":"character","attributes":{},"value":["http://gratefulnetwork.live/"]},{"type":"character","attributes":{},"value":["UMass DACSS Program (My Academic Blog Link)"]},{"type":"character","attributes":{},"value":["https://kristinabecvar.com"]}]}]},{"type":"character","attributes":{},"value":["2022-04-21"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","code_folding"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[true]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -2490,6 +2490,7 @@ distill-header .nav a {
 <div class="dt=tag">network creation</div>
 <div class="dt=tag">network analytics</div>
 <div class="dt=tag">network visualization</div>
+<div class="dt=tag">statnet</div>
 </div>
 <!--/radix_placeholder_categories-->
 <p><p>Building a Grateful Dead Original Song Co-Writing Network in R
@@ -2515,7 +2516,10 @@ Academic Blog Link))<a href="https://kristinabecvar.com" class="uri">https://kri
 </ul></li>
 <li><a href="#statnet-network">Statnet Network</a>
 <ul>
-<li><a href="#network-features">Network Features</a></li>
+<li><a href="#network-features">Network Features</a>
+<ul>
+<li><a href="#visualization">Visualization</a></li>
+</ul></li>
 <li><a href="#dyad-triad-census">Dyad &amp; Triad Census</a></li>
 <li><a href="#transitivity">Transitivity</a></li>
 <li><a href="#geodesic-distance">Geodesic Distance</a></li>
@@ -2525,9 +2529,9 @@ Academic Blog Link))<a href="https://kristinabecvar.com" class="uri">https://kri
 <li><a href="#centrality">Centrality</a>
 <ul>
 <li><a href="#total-centrality">Total Centrality</a></li>
+<li><a href="#eigenvector-centrality">Eigenvector Centrality</a></li>
 <li><a href="#closeness">Closeness</a></li>
 <li><a href="#betweenness">Betweenness</a></li>
-<li><a href="#eigenvector-centrality">Eigenvector Centrality</a></li>
 <li><a href="#bonacich-power">Bonacich Power</a>
 <ul>
 <li><a href="#add-as-attributes">Add as Attributes</a></li>
@@ -2586,7 +2590,7 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>[1]  26 183</code></pre>
+<pre><code>[1]  25 181</code></pre>
 <details>
 <summary>
 Show code
@@ -2627,7 +2631,7 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>[1] 26 26</code></pre>
+<pre><code>[1] 25 25</code></pre>
 <details>
 <summary>
 Show code
@@ -2711,7 +2715,7 @@ Show code
 </div>
 </details>
 <pre><code> Network attributes:
-  vertices = 26 
+  vertices = 25 
   directed = FALSE 
   hyper = FALSE 
   loops = FALSE 
@@ -2755,7 +2759,7 @@ Show code
 </div>
 </details>
 <pre><code> Network attributes:
-  vertices = 26 
+  vertices = 25 
   directed = FALSE 
   hyper = FALSE 
   loops = FALSE 
@@ -2769,6 +2773,10 @@ Show code
     vertex.names 
 
 No edge attributes</code></pre>
+</div>
+<h3 id="visualization">Visualization</h3>
+<p>And a first look at the basic network structure</p>
+<div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
 Show code
@@ -2778,7 +2786,7 @@ Show code
 </code></pre>
 </div>
 </details>
-<p><img src="data:image/png;base64,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" width="624" /></p>
+<p><img src="data:image/png;base64,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gLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4CMvygkAAAJNSURBVICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLAEDghL4ICwBA4IS+CAsAQOCEvggLD+A5hY3zqqaOAcAAAAAElFTkSuQmCC" width="624" /></p>
 </div>
 <h2 id="dyad-triad-census">Dyad &amp; Triad Census</h2>
 <p>Looking at the dyad/triad census info, I have a total of 2600 triads,
@@ -2794,7 +2802,7 @@ Show code
 </div>
 </details>
 <pre><code>     Mut Asym Null
-[1,]  65    0  260</code></pre>
+[1,]  65    0  235</code></pre>
 <details>
 <summary>
 Show code
@@ -2805,7 +2813,7 @@ Show code
 </div>
 </details>
 <pre><code>      003 012 102 021D 021U 021C 111D 111U 030T 030C 201 120D 120U
-[1,] 1451   0 825    0    0    0    0    0    0    0 237    0    0
+[1,] 1216   0 760    0    0    0    0    0    0    0 237    0    0
      120C 210 300
 [1,]    0   0  87</code></pre>
 <details>
@@ -2817,7 +2825,7 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>[1] 2600</code></pre>
+<pre><code>[1] 2300</code></pre>
 </div>
 <h2 id="transitivity">Transitivity</h2>
 <p>Looking next at the network transitivity, I can confirm that it is
@@ -2836,8 +2844,8 @@ Show code
 </div>
 <h2 id="geodesic-distance">Geodesic Distance</h2>
 <p>Looking at the geodesic distance tells me that on average, I can
-confirm that the path length in statnet is 1.78, which is different than
-result from igraph of just over 2.</p>
+confirm that the path length in statnet is 1.93, which is not
+significantly different than result from igraph of 2.01.</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -2849,12 +2857,12 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>[1] 1.784024</code></pre>
+<pre><code>[1] 1.9296</code></pre>
 </div>
 <h2 id="components">Components</h2>
-<p>I can determine that there are 2 components in the statnet network
-object, they are - as in igraph - 25 songwriters in the large component
-and one isolate.</p>
+<p>I can determine that there is one component in the statnet network
+object, as in igraph - 25 songwriters in the giant component and no
+isolates.</p>
 <div class="layout-chunk" data-layout="l-body">
 <details>
 <summary>
@@ -2865,19 +2873,7 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>[1] 2</code></pre>
-<details>
-<summary>
-Show code
-</summary>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="fu">component.largest</span><span class="op">(</span><span class="va">gd_statnet</span><span class="op">)</span>
-</code></pre>
-</div>
-</details>
-<pre><code> [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-[12]  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-[23]  TRUE  TRUE  TRUE  TRUE</code></pre>
+<pre><code>[1] 1</code></pre>
 </div>
 <h2 id="density">Density</h2>
 <p>In this case, the statnet output is far different from the igraph
@@ -2893,7 +2889,7 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>[1] 0.2</code></pre>
+<pre><code>[1] 0.2166667</code></pre>
 </div>
 <h1 id="centrality">Centrality</h1>
 <h2 id="total-centrality">Total Centrality</h2>
@@ -2927,17 +2923,74 @@ Show code
 5 Bill Kreutzmann        18        9         9 0.06923077</code></pre>
 </div>
 <p>The statnet total degree scores are again, very different from
-igraph. In igraph, Jerry Garcia is the highest degree node, which makes
-sense given his position as the practical and figurative head of the
-band and the fact that he contributed to more songs than any other
-songwriter.</p>
-<p>Although in igraph’s evaluation I was suprised that Jerry Garcia’s
-songwriting partner Robert Hunter was ranked lower than Phil Lesh and
-Bob Weir, it seems that is also the case in the statnet evaluation.</p>
-<p>I can understand how Bob Weir and Phil Lesh have high centrality
-despite lower song counts given their status as co-founding members of
-the band, it does not make sense to me knowing the context that they are
-ranked higher than Jerry Garcia.</p>
+igraph. In igraph, Jerry Garcia is the highest degree node, which gels
+with my hypothesis given his position as the practical and figurative
+head of the band and the fact that he contributed to more songs than any
+other songwriter.</p>
+<p>However, more surprising than Jerry Garcia’s position in fourth in
+highest total degree centrality is his songwriting partner Robert
+Hunter’s position above him in third highest.</p>
+<p>I can understand how Bob Weir has a high centrality despite lower
+song counts given his high Eigenvector centrality and betweenness status
+in previous igraph evaluations. However, I am surprised by his position
+as highest total degree and even more surprised that Phil Lesh is second
+highest total degree centrality overall. Both are co-founding members of
+the band, and did contribute to many songs written by the band, but not
+more than Jerry Garcia. It does not make sense to me, knowing the
+context and subject matter, that they are ranked higher than Jerry
+Garcia.</p>
+<h2 id="eigenvector-centrality">Eigenvector Centrality</h2>
+<div class="layout-chunk" data-layout="l-body">
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#calculate eigenvector centrality</span>
+<span class="va">eigen</span> <span class="op">&lt;-</span> <span class="fu">sna</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sna/man/evcent.html">evcent</a></span><span class="op">(</span><span class="va">gd_statnet</span>, gmode<span class="op">=</span><span class="st">&quot;graph&quot;</span><span class="op">)</span>
+<span class="co">#add to nodes data frame</span>
+<span class="va">gd_stat_nodes</span><span class="op">$</span><span class="va">eigenvector</span> <span class="op">&lt;-</span> <span class="va">eigen</span>
+
+<span class="va">gd_adjacency</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">gd_statnet</span><span class="op">)</span>
+<span class="va">gd_adjacency_2</span> <span class="op">&lt;-</span> <span class="va">gd_adjacency</span> <span class="op">%*%</span> <span class="va">gd_adjacency</span>
+
+<span class="co">#calculate portion of reflected centrality</span>
+<span class="va">gd_reflective</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">gd_adjacency_2</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">gd_adjacency_2</span><span class="op">)</span><span class="op">)</span>
+<span class="va">gd_reflective</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.nan</a></span><span class="op">(</span><span class="va">gd_reflective</span><span class="op">)</span>,<span class="fl">0</span>,<span class="va">gd_reflective</span><span class="op">)</span>
+
+<span class="co">#calculate derived centrality</span>
+<span class="va">gd_derived</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">gd_adjacency_2</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">gd_adjacency_2</span><span class="op">)</span><span class="op">)</span>
+<span class="va">gd_derived</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html">is.nan</a></span><span class="op">(</span><span class="va">gd_derived</span><span class="op">)</span>,<span class="fl">1</span>,<span class="va">gd_derived</span><span class="op">)</span>
+
+<span class="co">#add to nodes data frame</span>
+<span class="va">gd_stat_nodes</span><span class="op">$</span><span class="va">eigen_derived</span> <span class="op">&lt;-</span> <span class="va">gd_derived</span>
+<span class="va">gd_stat_nodes</span><span class="op">$</span><span class="va">eigen_reflective</span> <span class="op">&lt;-</span> <span class="va">gd_reflective</span>
+
+<span class="co">#sort the top total degree of nodes in the stat network</span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">gd_stat_nodes</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">eigenvector</span><span class="op">)</span><span class="op">)</span><span class="op">%&gt;%</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
+<pre><code>             name totdegree indegree outdegree   rescaled eigenvector
+1        Bob Weir        34       17        17 0.13076923   0.4003206
+2       Phil Lesh        28       14        14 0.10769231   0.3539098
+3    Jerry Garcia        20       10        10 0.07692308   0.3305871
+4   Robert Hunter        22       11        11 0.08461538   0.3233581
+5 Bill Kreutzmann        18        9         9 0.06923077   0.3219131
+  eigen_derived eigen_reflective
+1     0.8333333        0.1666667
+2     0.8426966        0.1573034
+3     0.8837209        0.1162791
+4     0.8750000        0.1250000
+5     0.8941176        0.1058824</code></pre>
+</div>
+<p>The most immediate observations I have, is that the highest degree
+node in the igraph network, Jerry Garcia, was not the highest
+Eigenvector centrality - but in this network Bob Weir is highest both in
+degree and in Eigenvector centrality. The only change in the top five is
+that Jerry Garcia moved ahead of Robert Hunter, which makes sense.</p>
+<p>The derived and reflective scores do not make sense - I’m not sure
+that the formula I used on the igraph network translates to statnet.</p>
 <h2 id="closeness">Closeness</h2>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2954,13 +3007,22 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>            name totdegree indegree outdegree    rescaled closeness
-1  Eric Andersen         2        1         1 0.007692308         0
-2    John Barlow         6        3         3 0.023076923         0
-3    Bob Bralove        10        5         5 0.038461538         0
-4 Andrew Charles         2        1         1 0.007692308         0
-5    John Dawson         4        2         2 0.015384615         0</code></pre>
+<pre><code>             name totdegree indegree outdegree   rescaled eigenvector
+1        Bob Weir        34       17        17 0.13076923   0.4003206
+2       Phil Lesh        28       14        14 0.10769231   0.3539098
+3   Robert Hunter        22       11        11 0.08461538   0.3233581
+4    Jerry Garcia        20       10        10 0.07692308   0.3305871
+5 Bill Kreutzmann        18        9         9 0.06923077   0.3219131
+  eigen_derived eigen_reflective closeness
+1     0.8333333        0.1666667 0.7741935
+2     0.8426966        0.1573034 0.7058824
+3     0.8750000        0.1250000 0.6486486
+4     0.8837209        0.1162791 0.6315789
+5     0.8941176        0.1058824 0.6153846</code></pre>
 </div>
+<p>The closeness scores are similar to overall degree centrality, at
+least in the top scores, and these are also in line with the igraph
+results.</p>
 <h2 id="betweenness">Betweenness</h2>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -2977,48 +3039,27 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>           name totdegree indegree outdegree   rescaled closeness
-1      Bob Weir        34       17        17 0.13076923         0
-2     Phil Lesh        28       14        14 0.10769231         0
-3        Pigpen        16        8         8 0.06153846         0
-4 Robert Hunter        22       11        11 0.08461538         0
-5  Jerry Garcia        20       10        10 0.07692308         0
-  betweenness
-1   111.73333
-2    89.40000
-3    44.20000
-4    30.45000
-5    13.23333</code></pre>
+<pre><code>           name totdegree indegree outdegree   rescaled eigenvector
+1      Bob Weir        34       17        17 0.13076923   0.4003206
+2     Phil Lesh        28       14        14 0.10769231   0.3539098
+3        Pigpen        16        8         8 0.06153846   0.2438925
+4 Robert Hunter        22       11        11 0.08461538   0.3233581
+5  Jerry Garcia        20       10        10 0.07692308   0.3305871
+  eigen_derived eigen_reflective closeness betweenness
+1     0.8333333        0.1666667 0.7741935   111.73333
+2     0.8426966        0.1573034 0.7058824    89.40000
+3     0.8857143        0.1142857 0.6000000    44.20000
+4     0.8750000        0.1250000 0.6486486    30.45000
+5     0.8837209        0.1162791 0.6315789    13.23333</code></pre>
 </div>
-<h2 id="eigenvector-centrality">Eigenvector Centrality</h2>
-<div class="layout-chunk" data-layout="l-body">
-<details>
-<summary>
-Show code
-</summary>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#calculate eigenvector centrality</span>
-<span class="va">eigen</span> <span class="op">&lt;-</span> <span class="fu">sna</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sna/man/evcent.html">evcent</a></span><span class="op">(</span><span class="va">gd_statnet</span>, gmode<span class="op">=</span><span class="st">&quot;graph&quot;</span><span class="op">)</span>
-<span class="co">#add to nodes data frame</span>
-<span class="va">gd_stat_nodes</span><span class="op">$</span><span class="va">eigenvector</span> <span class="op">&lt;-</span> <span class="va">eigen</span>
-<span class="co">#sort the top total degree of nodes in the stat network</span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">gd_stat_nodes</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">eigenvector</span><span class="op">)</span><span class="op">)</span><span class="op">%&gt;%</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>
-</code></pre>
-</div>
-</details>
-<pre><code>             name totdegree indegree outdegree   rescaled closeness
-1        Bob Weir        34       17        17 0.13076923         0
-2       Phil Lesh        28       14        14 0.10769231         0
-3    Jerry Garcia        20       10        10 0.07692308         0
-4   Robert Hunter        22       11        11 0.08461538         0
-5 Bill Kreutzmann        18        9         9 0.06923077         0
-  betweenness eigenvector
-1  111.733333   0.4003206
-2   89.400000   0.3539098
-3   13.233333   0.3305871
-4   30.450000   0.3233581
-5    3.066667   0.3219131</code></pre>
-</div>
+<p>Again, when comparing these results to the igraph results, the
+highest degree node (Jerry Garcia) was not the node with the highest
+scoring betweenness. In the statnet network, the highest degree node,
+Bob Weir, is also the highest betweenness score, and by a significantly
+similar ratio to Garcia as in the igraph network evaluation.</p>
+<p>Similarly to igraph, Pigpen jumps up in the rankings for betweenness,
+likely because his contributions were primarily full-band
+compositions.</p>
 <h2 id="bonacich-power">Bonacich Power</h2>
 <div class="layout-chunk" data-layout="l-body">
 <details>
@@ -3035,18 +3076,27 @@ Show code
 </code></pre>
 </div>
 </details>
-<pre><code>            name totdegree indegree outdegree    rescaled closeness
-1 Donna Godchaux        12        6         6 0.046153846         0
-2   Willie Dixon         4        2         2 0.015384615         0
-3  Eric Andersen         2        1         1 0.007692308         0
-4  Gerrit Graham         2        1         1 0.007692308         0
-5  Bruce Hornsby         0        0         0 0.000000000         0
-  betweenness eigenvector   bonacich
-1           0  0.23834221 0.30043303
-2           0  0.06423801 0.27430842
-3           0  0.04883644 0.02612461
-4           0  0.04883644 0.02612461
-5           0  0.00000000 0.00000000</code></pre>
+<pre><code>            name totdegree indegree outdegree    rescaled eigenvector
+1 Donna Godchaux        12        6         6 0.046153846  0.23834221
+2   Willie Dixon         4        2         2 0.015384615  0.06423801
+3  Eric Andersen         2        1         1 0.007692308  0.04883644
+4  Gerrit Graham         2        1         1 0.007692308  0.04883644
+5    Joe Royster         4        2         2 0.015384615  0.03388727
+  eigen_derived eigen_reflective closeness betweenness    bonacich
+1     0.9062500       0.09375000 0.5454545           0  0.29459882
+2     0.9090909       0.09090909 0.4528302           0  0.26898153
+3     0.9411765       0.05882353 0.4444444           0  0.02561729
+4     0.9411765       0.05882353 0.4444444           0  0.02561729
+5     0.8000000       0.20000000 0.3870968           0 -0.07044754</code></pre>
+<details>
+<summary>
+Show code
+</summary>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.csv</a></span><span class="op">(</span><span class="va">gd_stat_nodes</span>, file <span class="op">=</span> <span class="st">&quot;gd_stat_nodes.csv&quot;</span><span class="op">)</span>
+</code></pre>
+</div>
+</details>
 </div>
 <h3 id="add-as-attributes">Add as Attributes</h3>
 <div class="layout-chunk" data-layout="l-body">
@@ -3073,20 +3123,21 @@ Show code
 </summary>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class="va">correlations</span> <span class="op">&lt;-</span> <span class="va">gd_stat_nodes</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">totdegree</span>,<span class="va">eigenvector</span>,<span class="va">betweenness</span>,<span class="va">bonacich</span><span class="op">)</span><span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">totdegree</span>,<span class="va">eigenvector</span>,<span class="va">betweenness</span>,<span class="va">closeness</span>,<span class="va">bonacich</span><span class="op">)</span><span class="op">%&gt;%</span>
   <span class="fu"><a href="https://corrr.tidymodels.org/reference/correlate.html">correlate</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://corrr.tidymodels.org/reference/rearrange.html">rearrange</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://corrr.tidymodels.org/reference/fashion.html">fashion</a></span><span class="op">(</span><span class="va">correlations</span><span class="op">)</span>
 </code></pre>
 </div>
 </details>
-<pre><code>         term totdegree eigenvector betweenness bonacich
-1   totdegree                   .95         .82     -.36
-2 eigenvector       .95                     .65     -.32
-3 betweenness       .82         .65                 -.26
-4    bonacich      -.36        -.32        -.26         </code></pre>
+<pre><code>         term closeness totdegree eigenvector betweenness bonacich
+1   closeness                 .97         .96         .79     -.36
+2   totdegree       .97                   .95         .83     -.32
+3 eigenvector       .96       .95                     .65     -.28
+4 betweenness       .79       .83         .65                 -.25
+5    bonacich      -.36      -.32        -.28        -.25         </code></pre>
 </div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
