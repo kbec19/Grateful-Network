@@ -1,0 +1,220 @@
+---
+title: "Statistical Analysis"
+description: |
+  Using Univariate Conditional Uniform Graph Tests
+preview: gtrans.png
+categories:
+  - network analytics
+  - statistics
+  - CUG test
+  - statnet
+author:
+  - name: Kristina Becvar
+    url: http://gratefulnetwork.live/
+    affiliation: UMass DACSS Program (My Academic Blog Link)
+    affiliation_url: https://kristinabecvar.com
+date: 2022-05-10
+output:
+  distill::distill_article:
+    toc: true
+    code_folding: true
+
+---  
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r echo=FALSE, results=FALSE}
+
+library(ggplot2) 
+library(readr) 
+library(statnet)
+library(ggraph)
+library(tidyverse)
+library(ergm)
+library(dplyr)
+library(corrr)
+library(magrittr)
+
+suppressWarnings(expr)
+
+```
+
+# Loading Networks
+
+I previously analyzed the network using igraph and statnet, and need to make a decision about which package serves the network best. 
+
+## Affiliation Matrix
+
+Loading the dataset and creating the network to begin my analysis:
+
+```{r code_folding=TRUE}
+gd_affiliation <- read.csv('gd_affiliation_matrix.csv', row.names = 1, header = TRUE, check.names = FALSE)
+gd_matrix <- as.matrix(gd_affiliation)
+```
+
+## Bipartite Projection
+
+```{r code_folding=TRUE}
+gd_projection <- gd_matrix%*%t(gd_matrix)
+write.csv(gd_projection, file = "gd_projection.csv")
+```
+
+## Create statnet Object
+
+```{r echo=FALSE}
+set.seed(11)
+gd_statnet <- as.network(gd_projection,
+               directed = FALSE, 
+               bipartite = FALSE,
+               loops = FALSE,
+               connected = TRUE)
+```
+
+# Centrality and Node Data
+
+I am going to load the data frame I saved from the statnet package analysis as well as a dataframe with key comparable results from each package
+
+```{r code_folding=TRUE}
+gd_stat_nodes <- read.csv("gd_stat_nodes.csv")
+gd_compare <- read.csv("gd_comparison_packages.csv")
+```
+
+# Comparing Network Properties
+
+In the semester assignment, we looked at what to do if we are interested in testing whether or not a specific network property, such as transitivity, is higher in the network we are interested in than we would expect from a random network. To test our network against a null hypothesis, we can use the function cug.test() and set the parameters on which we plan to condition. Possible parameters for this function include: size, edges, and dyad.census for sna/statnet.
+
+## Create t-stat Function
+
+```{r code_folding=TRUE}
+cug.t<-function(cug.object){
+  (cug.object$obs.stat-mean(cug.object$rep.stat))/sd(cug.object$rep.stat)
+}
+```
+
+## Network Degree Centralization
+
+Comparing network degree centralization to null conditional on size
+
+```{r code_folding=TRUE}
+#compare network transitivity to null conditional on size
+trans.cug<-cug.test(gd_projection,FUN=gtrans,mode="graph",cmode="size")
+trans.cug
+```
+
+### Plot Results
+
+```{r code_folding=TRUE}
+plot(trans.cug)
+```
+
+### Inspect Details
+
+```{r code_folding=TRUE}
+#inspect CUG test
+trans.cug
+```
+
+### T-Stat Test
+
+```{r code_folding=TRUE}
+#inspect CUG test
+cug.t(trans.cug)
+```
+
+### Evaluation
+
+There is a reasonable probability that the observed network transitivity of 0.524 could be randomly generated, conditional only on the size of the network. In this case, I cannot accept the alternative hypothesis that the observed transitivity is higher than would be expected from a random network. In fact, the probability that X <= 0.524 is 19.6% and the probability that x >= 0.524 is 80.4%. The t-stat evaluation tells us that the observed transitivity value is less than 1 standard error away from what we would expect, on average.
+
+## Network Degree Centralization
+
+Comparing network degree centralization to null conditional on size
+
+```{r code_folding=TRUE}
+#compare network degree centralization to null conditional on size
+c.degree.cug <-cug.test(gd_projection,FUN=centralization,  FUN.arg=list(FUN=degree, cmode="degree"), mode="graph", cmode="size")
+```
+
+### Plot Results
+
+```{r code_foldin=TRUE}
+#plot vs simulation results
+plot(c.degree.cug)
+```
+
+### Inspect Details
+
+```{r code_folding=TRUE}
+#inspect CUG test
+c.degree.cug
+```
+
+### T-Stat Test
+
+```{r code_folding=TRUE}
+#t-stat between observed and simulated networks
+cug.t(c.degree.cug)
+```
+
+## Betweenness Centrality
+
+Comparing network betweenness centralization to null conditional on size
+
+```{r code_folding=TRUE}
+#compare network betweenness centralization to null conditional on size
+b.degree.cug <-cug.test(gd_projection,FUN=centralization,  FUN.arg=list(FUN=betweenness, cmode="undirected"), mode="graph", cmode="size", reps=100) 
+```
+
+### Plot Results
+
+```{r code_folding=TRUE}
+#plot vs simulation results
+plot(b.degree.cug)
+```
+
+### Inspect Details
+
+```{r code_folding=TRUE}
+#inspect CUG test
+b.degree.cug
+```
+
+### T-Stat Test
+
+```{r code_folding=TRUE}
+#t-stat between observed and simulated networks
+cug.t(b.degree.cug)
+```
+
+## Transitivity
+
+Comparing transitivity to null conditional on dyad
+
+```{r code_folding=TRUE}
+t.degree.cug <-cug.test(gd_projection,FUN=gtrans, mode="graph", cmode="dyad", reps=100) 
+```
+
+### Plot Results
+
+```{r code_folding=TRUE}
+#plot vs simulation results
+plot(t.degree.cug)
+```
+
+### Inspect Details
+
+```{r code_folding=TRUE}
+#inspect CUG test
+t.degree.cug
+```
+
+### T-Stat Test
+
+```{r code_folding=TRUE}
+#t-stat between observed and simulated networks
+cug.t(t.degree.cug)
+```
+
+

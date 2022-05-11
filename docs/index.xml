@@ -7,7 +7,20 @@
     <description>Grateful Network
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 25 Apr 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 10 May 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Statistical Analysis</title>
+      <dc:creator>Kristina Becvar</dc:creator>
+      <link>http://gratefulnetwork.live/posts/statistics</link>
+      <description>Using Univariate Conditional Uniform Graph Tests</description>
+      <category>network analytics</category>
+      <category>statistics</category>
+      <category>CUG test</category>
+      <category>statnet</category>
+      <guid>http://gratefulnetwork.live/posts/statistics</guid>
+      <pubDate>Tue, 10 May 2022 00:00:00 +0000</pubDate>
+      <media:content url="http://gratefulnetwork.live/posts/statistics/gtrans.png" medium="image" type="image/png" width="565" height="349"/>
+    </item>
     <item>
       <title>Network Differences and Advanced Analysis</title>
       <dc:creator>Kristina Becvar</dc:creator>
