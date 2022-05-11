@@ -94,9 +94,9 @@ cug.t<-function(cug.object){
 }
 ```
 
-## Network Degree Centralization
+## Network Transitivity to Null
 
-Comparing network degree centralization to null conditional on size
+Comparing transitivity to null conditional on size
 
 ```{r code_folding=TRUE}
 #compare network transitivity to null conditional on size
@@ -128,7 +128,7 @@ cug.t(trans.cug)
 
 There is a reasonable probability that the observed network transitivity of 0.524 could be randomly generated, conditional only on the size of the network. In this case, I cannot accept the alternative hypothesis that the observed transitivity is higher than would be expected from a random network. In fact, the probability that X <= 0.524 is 19.6% and the probability that x >= 0.524 is 80.4%. The t-stat evaluation tells us that the observed transitivity value is less than 1 standard error away from what we would expect, on average.
 
-## Network Degree Centralization
+## Network Degree Centralization to Null
 
 Comparing network degree centralization to null conditional on size
 
@@ -157,6 +157,10 @@ c.degree.cug
 #t-stat between observed and simulated networks
 cug.t(c.degree.cug)
 ```
+
+### Evaluation
+
+There is an extremely remote probability that the observed network degree centrality of 5.21 could be randomly generated, conditional only on the size of the network. In this case, I can accept the alternative hypothesis that the observed network degree centrality is higher than would be expected from a random network. .
 
 ## Betweenness Centrality
 
@@ -188,6 +192,10 @@ b.degree.cug
 cug.t(b.degree.cug)
 ```
 
+### Evaluation
+
+Again, there is an extremely remote probability that the observed betweenness centrality of 0.376 could be randomly generated, conditional only on the size of the network. In this case, I can accept the alternative hypothesis that the observed network degree centrality is higher than would be expected from a random network. This makes sense with the rest of my network evaluations.
+
 ## Transitivity
 
 Comparing transitivity to null conditional on dyad
@@ -216,5 +224,61 @@ t.degree.cug
 #t-stat between observed and simulated networks
 cug.t(t.degree.cug)
 ```
+
+### Evaluation
+
+Unlike the first evaluation of transitivity on size, this evaluation of transivity on dyad gives a result that is more in line with subsequent calculations.
+
+## Multiple Evaluations
+
+For my research in particular, I want to look at the measures of centrality and through the different modes of evaluation.
+
+```{r code_folding=TRUE}
+cug_cent_size <- cug.test(gd_statnet,
+                       centralization,
+                       FUN.arg=list(FUN=degree), 
+                       mode="graph", 
+                       cmode="size")
+cug_cent_edge <- cug.test(gd_statnet,
+                        centralization,
+                        FUN.arg=list(FUN=degree), 
+                        mode="graph", 
+                        cmode="edges")
+cug_cent_dyad <- cug.test(gd_statnet,
+                       centralization,
+                       FUN.arg=list(FUN=degree), 
+                       mode="graph", 
+                       cmode="dyad.census")
+```
+
+### Visualization
+
+```{r code_folding=TRUE}
+degree_centralization <- c(cug_cent_size$obs.stat,
+                        cug_cent_edge$obs.stat, 
+                        cug_cent_dyad$obs.stat)
+
+rt_tail <- c(cug_cent_size$pgteobs, 
+             cug_cent_edge$pgteobs, 
+             cug_cent_dyad$pgteobs)
+
+lt_tail <- c(cug_cent_size$plteobs, 
+             cug_cent_edge$plteobs, 
+             cug_cent_dyad$plteobs)
+
+centrality <- cbind(degree_centralization,
+                     rt_tail, 
+                     lt_tail)
+
+rownames(centrality) <- c("Size", "Edges", "Dyads")
+
+par(mfrow=c(1,3))
+plot(cug_cent_size, main="Centrality \nConditioned on Size" )
+plot(cug_cent_edge, main="Centrality \nConditioned on Edges" )
+plot(cug_cent_dyad, main="Centrality \nConditioned on Dyads" )
+```
+
+
+
 
 
