@@ -55,10 +55,12 @@
       <title>Welcome to the Grateful Network Project</title>
       <dc:creator>Kristina Becvar</dc:creator>
       <link>http://gratefulnetwork.live/posts/welcome</link>
-      <description>This is an Ongoing Project Exploring the Grateful Dead Original Song Co-Writing Network</description>
+      <description>Theory and Goals</description>
       <category>grateful network</category>
+      <category>summary</category>
       <guid>http://gratefulnetwork.live/posts/welcome</guid>
       <pubDate>Fri, 25 Mar 2022 00:00:00 +0000</pubDate>
+      <media:content url="http://gratefulnetwork.live/posts/welcome/Grateful-Dead-Map-1200x900.png" medium="image" type="image/png" width="599" height="449"/>
     </item>
   </channel>
 </rss>

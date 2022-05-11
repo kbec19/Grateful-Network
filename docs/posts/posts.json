@@ -78,7 +78,7 @@
   {
     "path": "posts/welcome/",
     "title": "Welcome to the Grateful Network Project",
-    "description": "This is an Ongoing Project Exploring the Grateful Dead Original Song Co-Writing Network",
+    "description": "Theory and Goals",
     "author": [
       {
         "name": "Kristina Becvar",
@@ -87,11 +87,14 @@
     ],
     "date": "2022-03-25",
     "categories": [
-      "grateful network"
+      "grateful network",
+      "summary"
     ],
-    "contents": "\r\n\r\n\r\n\r\n",
-    "preview": {},
-    "last_modified": "2022-05-09T16:54:23-04:00",
-    "input_file": {}
+    "contents": "\r\nIntroduction\r\n“The attempt to make sense of trying to make sense of something\r\nthat possibly makes no sense makes a sense of its own; a sense often\r\nmore akin to music than to reason.” —Robert Hunter, “A Note on Method,”\r\nA Strange Music, 1991 (Meriwether, 2012)\r\nDespite the words of key Grateful Dead collaborator and poet Robert\r\nHunter, I decided to tackle the task of analyzing the social network of\r\nsongwriters of the Grateful Dead’s original song catalog.\r\nMusic is a product of collective action, involving many participants\r\nwho interact and form various types of social tie with one another.\r\n(Crossley, 2008) A music world is a subset of the total musical activity\r\nin a society, and is also a social network because it is an activity\r\ninvolving interaction within and between artists, audiences, crew, and\r\noutside interests. (Crossley & Emms, 2016)\r\nThis research looks at songwriters as nodes, and ties where\r\ncollaborative relationships exist represent co-authorship of songs. This\r\nstructure, therefore, begins as an incidence matrix where songwriters\r\nand songs are represented in a matrix which is projected into a\r\nbipartite structure where co-affiliation is used as grounds that two\r\nactors (songwriters) are connected. Unfortunately, this projection also\r\nsimplifies the social structure of the network and omits some key\r\ninformation. For instance, in this simplified projection, there is\r\nlittle ability to look at where songwriters had external relationships,\r\nhow popular or resonant a song was. This is something I hope to explore\r\nin further studies.\r\nIn the collective production of music, there are perhaps three main\r\ncreative outputs, compositions - the songs that are written, recorded\r\nmusic and live performances. Watson, J. B. (2020) The live performances\r\nof the songs of the Grateful Dead are integral to their success, both in\r\nprojecting the success through playing the songs and - more importantly\r\n- reflecting the success through the demand for the songs from the\r\ncrowd. The Grateful Dead was a top-grossing touring act for years, but\r\nsaw much less success in the sale of their albums. (Gallo, 2001) It it\r\ntherefore plausible that further analysis of the strength of the\r\nsongwriting connections in their music should be analyzed along with\r\nsome measures of their resonance with the audience via how often a song\r\nwas played.\r\nAlternatively or complementary, it could be helpful to look at the\r\nroles live venues play in the frequency of a song’s live performance.\r\nTaking this attribute further could look like an analysis of headlining\r\ngigs compared with participation in festivals.\r\nFinally, another application of network modeling could be to look at\r\nhow these original songs were spread into the societal sub-culture\r\nthrough cover bands and covers by other iterations of bands containing\r\nmembers of the Grateful Dead. Conversely, expanding the network analysis\r\nto explore not just the original compositions but all songs performed,\r\nincluding covers by unrelated artists and individuals and bands related\r\nto the Grateful Dead musical world.\r\nOnce the analysis of the Grateful Dead songwriting networks have been\r\nexhausted, the applications of social analysis to the rest of the\r\nGrateful Dead sub-culture are unlimited.\r\n\r\n\r\n\r\n",
+    "preview": "posts/welcome/Grateful-Dead-Map-1200x900.png",
+    "last_modified": "2022-05-11T00:07:43-04:00",
+    "input_file": "welcome.knit.md",
+    "preview_width": 599,
+    "preview_height": 449
   }
 ]

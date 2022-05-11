@@ -1,9 +1,11 @@
 ---
 title: "Welcome to the Grateful Network Project"
 description: |
-  This is an Ongoing Project Exploring the Grateful Dead Original Song Co-Writing Network
+  Theory and Goals
+preview: Grateful-Dead-Map-1200x900.png
 categories:
   - grateful network
+  - summary
 author:
   - name: Kristina Becvar
     url: https://kbec19.github.io/Grateful-Network/
@@ -19,5 +21,21 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```
 
+## Introduction
 
+*"The attempt to make sense of trying to make sense of something that possibly makes no sense makes a sense of its own; a sense often more akin to music than to reason." —Robert Hunter, “A Note on Method,” A Strange Music, 1991 (Meriwether, 2012)*
+
+Despite the words of key Grateful Dead collaborator and poet Robert Hunter, I decided to tackle the task of analyzing the social network of songwriters of the Grateful Dead's original song catalog.
+
+Music is a product of collective action, involving many participants who interact and form various types of social tie with one another. (Crossley, 2008) A music world is a subset of the total musical activity in a society, and is also a social network because it is an activity involving interaction within and between artists, audiences, crew, and outside interests. (Crossley & Emms, 2016)
+
+This research looks at songwriters as nodes, and ties where collaborative relationships exist represent co-authorship of songs. This structure, therefore, begins as an incidence matrix where songwriters and songs are represented in a matrix which is projected into a bipartite structure where co-affiliation is used as grounds that two actors (songwriters) are connected. Unfortunately, this projection also simplifies the social structure of the network and omits some key information. For instance, in this simplified projection, there is little ability to look at where songwriters had external relationships, how popular or resonant a song was. This is something I hope to explore in further studies.
+
+In the collective production of music, there are perhaps three main creative outputs, compositions - the songs that are written, recorded music and live performances. Watson, J. B. (2020) The live performances of the songs of the Grateful Dead are integral to their success, both in projecting the success through playing the songs and - more importantly - reflecting the success through the demand for the songs from the crowd. The Grateful Dead was a top-grossing touring act for years, but saw much less success in the sale of their albums. (Gallo, 2001) It it therefore plausible that further analysis of the strength of the songwriting connections in their music should be analyzed along with some measures of their resonance with the audience via how often a song was played.
+
+Alternatively or complementary, it could be helpful to look at the roles live venues play in the frequency of a song's live performance. Taking this attribute further could look like an analysis of headlining gigs compared with participation in festivals.
+
+Finally, another application of network modeling could be to look at how these original songs were spread into the societal sub-culture through cover bands and covers by other iterations of bands containing members of the Grateful Dead. Conversely, expanding the network analysis to explore not just the original compositions but all songs performed, including covers by unrelated artists and individuals and bands related to the Grateful Dead musical world.
+
+Once the analysis of the Grateful Dead songwriting networks have been exhausted, the applications of social analysis to the rest of the Grateful Dead sub-culture are unlimited. 
 
