@@ -260,6 +260,23 @@ blk_mod2$block.model
 plot.block(blk_mod2,main="Grateful Dead Songwriting, 5 Partitions", cex.lab=.5)
 ```
 
+### concoR-Based Partitions
+
+```{r echo=FALSE}
+library(concoR)
+#select partitions with concor
+concoR::concor_hca(list(gd_projection), p=2)
+```
+
+```{r code_folding=TRUE}
+#select partitions with concor
+blks<-concoR::concor_hca(list(gd_projection), p=2)
+#blockmodel with concor
+blk_mod <- blockmodel(gd_statnet, blks$block, plabels=blks$vertex) 
+#plot blockmodel object
+plot.block(blk_mod,main="Grateful Dead Songwriting, concoR 4 Partitions", cex.lab=.5)
+```
+
 ## Blockmodeling Choice
 
 In my semester assignment posts, I looked more deeply into the role and blockmodeling of the network. In the end I was able to find a model that represents the network most intuitively - the optimized 5-partition blockmodel.
