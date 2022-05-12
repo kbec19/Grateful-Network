@@ -2,7 +2,7 @@
 title: "Statistical Analysis"
 description: |
   Using Univariate Conditional Uniform Graph Tests
-preview: gtrans.png
+preview: cug.png
 categories:
   - network analytics
   - statistics
