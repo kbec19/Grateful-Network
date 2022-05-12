@@ -7,7 +7,19 @@
     <description>Grateful Network
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 10 May 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 May 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Semester Summary</title>
+      <dc:creator>Kristina Becvar</dc:creator>
+      <link>http://gratefulnetwork.live/posts/semestersummary</link>
+      <description>Wrap-Up of Preliminary Analysis</description>
+      <category>network analytics</category>
+      <category>poster presentation</category>
+      <category>summary</category>
+      <guid>http://gratefulnetwork.live/posts/semestersummary</guid>
+      <pubDate>Wed, 11 May 2022 00:00:00 +0000</pubDate>
+      <media:content url="http://gratefulnetwork.live/posts/semestersummary/poster.png" medium="image" type="image/png" width="4608" height="3456"/>
+    </item>
     <item>
       <title>Statistical Analysis</title>
       <dc:creator>Kristina Becvar</dc:creator>

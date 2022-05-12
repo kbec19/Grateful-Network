@@ -227,7 +227,7 @@ cug.t(t.degree.cug)
 
 ### Evaluation
 
-Unlike the first evaluation of transitivity on size, this evaluation of transivity on dyad gives a result that is more in line with subsequent calculations.
+Unlike the first evaluation of transitivity on size, this evaluation of transitivity on dyad gives a result that is more in line with subsequent calculations.
 
 ## Multiple Evaluations
 
@@ -249,6 +249,8 @@ cug_cent_dyad <- cug.test(gd_statnet,
                        FUN.arg=list(FUN=degree), 
                        mode="graph", 
                        cmode="dyad.census")
+
+cug_cent_dyad
 ```
 
 ### Visualization
